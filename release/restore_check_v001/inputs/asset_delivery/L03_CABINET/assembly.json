@@ -1,0 +1,786 @@
+{
+  "contract_version": "1.0",
+  "level_id": "mvp_cabinet",
+  "state_source": "initial_state.flags",
+  "initial_state": {
+    "era": "present",
+    "flags": {
+      "clue_seen": false,
+      "cabinet_unlocked": false,
+      "power_on": false,
+      "exit_reached": false
+    },
+    "checkpoint_id": null
+  },
+  "city_placement": null,
+  "scope": "Small independent asset assembly and whitebox only. No city level, main scene, engine gameplay or UE changes.",
+  "units": "m",
+  "coordinates": {
+    "authoring": "Blender Z-up, facade faces -Y",
+    "delivery": "glTF/Godot Y-up",
+    "mapping_blender_to_godot": "(x,y,z) -> (x,z,-y)",
+    "conversion_count": 1,
+    "root": "ROOT_mvp_cabinet",
+    "root_transform": {
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "files": {
+    "past": {
+      "blend": "mvp_cabinet_past.blend",
+      "visual_glb": "mvp_cabinet_past.glb",
+      "collision_reference_glb": "mvp_cabinet_past_collision.glb",
+      "objects": "objects_past.json",
+      "collision_shapes": "collision_past.json"
+    },
+    "present": {
+      "blend": "mvp_cabinet_present.blend",
+      "visual_glb": "mvp_cabinet_present.glb",
+      "collision_reference_glb": "mvp_cabinet_present_collision.glb",
+      "objects": "objects_present.json",
+      "collision_shapes": "collision_present.json"
+    }
+  },
+  "reuse": {
+    "source_manifest": "source_manifest.json",
+    "original_future_means": "present",
+    "imported_meshes_unmodified": true,
+    "source_bank_transform_blender": {
+      "translation": [
+        -3.8,
+        1.9,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "dimensions": {
+    "test_floor_xyz_blender": [
+      10,
+      6,
+      0.24
+    ],
+    "floor_top_z": 0,
+    "door_opening_width_m": 1.6,
+    "door_opening_height_m": 2.42,
+    "door_leaf_xyz_blender": [
+      1.58,
+      0.13,
+      2.4
+    ],
+    "visual_bboxes": {
+      "past": {
+        "min": [
+          -5.0,
+          -3.0,
+          -0.24
+        ],
+        "max": [
+          5.0,
+          3.0,
+          3.3
+        ],
+        "size": [
+          10.0,
+          6.0,
+          3.54
+        ]
+      },
+      "present": {
+        "min": [
+          -5.0,
+          -3.0,
+          -0.24
+        ],
+        "max": [
+          5.0,
+          3.0,
+          3.3
+        ],
+        "size": [
+          10.0,
+          6.0,
+          3.54
+        ]
+      }
+    }
+  },
+  "eras": {
+    "past": {
+      "code_plate": "ASM_PASSWORD_PLATE",
+      "plate_text": "TEST CODE / 0427",
+      "input_surface": "ASM_COVER_PAST",
+      "buttons_present": false,
+      "door_and_light_runtime_policy": "Unconfirmed. Preserve past authored baseline and do not derive past door or lamps from present power_on."
+    },
+    "present": {
+      "code_plate": "ASM_PASSWORD_PLATE",
+      "plate_text": "TEST CODE / unreadable placeholder",
+      "input_surface": "ASM_INPUT_PRESENT",
+      "buttons_present": true
+    }
+  },
+  "test_password": {
+    "config": "test_config.json",
+    "test_mode_config_key": "test_mode",
+    "test_code_key": "test_code",
+    "final_code": null,
+    "geometry_label_update": "Regenerate from config or replace VIS_PASSWORD_PLATE_VALUE with runtime Label3D; changing JSON alone cannot rewrite mesh glyphs."
+  },
+  "device_bindings": {
+    "plaque": "ASM_PASSWORD_PLATE",
+    "cabinet": "ASM_INPUT_PRESENT",
+    "start_button": "PIVOT_START_BUTTON",
+    "exit_trigger": "MARKER_EXIT_PROPOSAL"
+  },
+  "bindings": {
+    "input_panel_group": "ASM_INPUT_PRESENT",
+    "old_cover_group": "ASM_COVER_PAST",
+    "numeric_keys": [
+      "PIVOT_KEY_0",
+      "PIVOT_KEY_1",
+      "PIVOT_KEY_2",
+      "PIVOT_KEY_3",
+      "PIVOT_KEY_4",
+      "PIVOT_KEY_5",
+      "PIVOT_KEY_6",
+      "PIVOT_KEY_7",
+      "PIVOT_KEY_8",
+      "PIVOT_KEY_9"
+    ],
+    "clear_key": "PIVOT_KEY_CLR",
+    "confirm_key": "PIVOT_KEY_OK",
+    "startup_button": "PIVOT_START_BUTTON",
+    "lamp_standby": "VIS_LAMP_STANDBY",
+    "lamp_start_ready": "VIS_LAMP_START_READY",
+    "lamp_work": "VIS_LAMP_WORK",
+    "lamp_exit": "VIS_LAMP_EXIT",
+    "exit_door": "PIVOT_EXIT_DOOR",
+    "exit_collision": "COL_EXIT_DOOR"
+  },
+  "state_views": [
+    {
+      "era": "past",
+      "condition": "era == past",
+      "visible_group": "ASM_COVER_PAST",
+      "plate": "readable TEST code; no present keypad or startup button",
+      "door_and_lights": "past baseline; behavior unconfirmed; never copy present power result"
+    },
+    {
+      "era": "present",
+      "condition": "era == present and not initial_state.flags.cabinet_unlocked",
+      "input": "enabled",
+      "startup": "locked",
+      "start_ready_light": "off",
+      "work_and_exit_lights": "off",
+      "door": "closed"
+    },
+    {
+      "era": "present",
+      "condition": "era == present and initial_state.flags.cabinet_unlocked and not initial_state.flags.power_on",
+      "input": "verified",
+      "startup": "enabled; separate press required",
+      "start_ready_light": "on",
+      "work_and_exit_lights": "off",
+      "door": "closed"
+    },
+    {
+      "era": "present",
+      "condition": "era == present and initial_state.flags.power_on",
+      "startup": "activated after verification",
+      "start_ready_light": "on",
+      "work_and_exit_lights": "on",
+      "door": "translate +X 1.85m"
+    }
+  ],
+  "contract_semantics": {
+    "clue_seen": "feedback only; a correct code is accepted even without viewing the plaque",
+    "correct_code_in_present": "set cabinet_unlocked only",
+    "startup_press_in_present": "requires cabinet_unlocked; set power_on",
+    "completion": "power_on and exit_reached",
+    "exit_trigger": "Marker position only; game-side Area3D and logic still required"
+  },
+  "reset_checklist": [
+    "checkpoint reset restores the saved checkpoint era and flags together.",
+    "restart_level restores initial_state era, flags and null checkpoint_id.",
+    "Clear input buffer and error feedback; cancel in-flight button/door tweens.",
+    "Restore PIVOT_KEY_* and PIVOT_START_BUTTON to baseline transforms in objects_present.json.",
+    "Derive present door and lamp visuals from restored flags; closed door baseline [2.3,1.85,0] Blender / [2.3,0,-1.85] Godot, open adds +X 1.85m. Match COL_EXIT_DOOR.",
+    "Derive era visibility and input availability from restored era; do not project present power onto past door/lamps.",
+    "If restoring player position, use checkpoint/safe_return marker only after game-side clearance validation."
+  ],
+  "anchors": {
+    "entry": "MARKER_ENTRY_PROPOSAL",
+    "spawn": "MARKER_ENTRY_PROPOSAL",
+    "exit": "MARKER_EXIT_PROPOSAL",
+    "checkpoint": "MARKER_SAFE_RETURN_PROPOSAL",
+    "safe_return": "MARKER_SAFE_RETURN_PROPOSAL"
+  },
+  "anchor_details": [
+    {
+      "id": "MARKER_ENTRY_PROPOSAL",
+      "status": "proposal",
+      "blender_m": [
+        -2.4,
+        -2.0,
+        0.0
+      ],
+      "godot_m": [
+        -2.4,
+        0.0,
+        2.0
+      ]
+    },
+    {
+      "id": "MARKER_EXIT_PROPOSAL",
+      "status": "proposal",
+      "blender_m": [
+        2.3,
+        2.6,
+        0.0
+      ],
+      "godot_m": [
+        2.3,
+        0.0,
+        -2.6
+      ]
+    },
+    {
+      "id": "MARKER_SAFE_RETURN_PROPOSAL",
+      "status": "proposal",
+      "blender_m": [
+        0.35,
+        -0.75,
+        0.0
+      ],
+      "godot_m": [
+        0.35,
+        0.0,
+        0.75
+      ]
+    },
+    {
+      "id": "MARKER_INTERACT_KEYPAD_PROPOSAL",
+      "status": "proposal",
+      "blender_m": [
+        0.45,
+        0.65,
+        1.3
+      ],
+      "godot_m": [
+        0.45,
+        1.3,
+        -0.65
+      ]
+    },
+    {
+      "id": "MARKER_PLATE_READ_PROPOSAL",
+      "status": "proposal",
+      "blender_m": [
+        0.45,
+        0.9,
+        2.04
+      ],
+      "godot_m": [
+        0.45,
+        2.04,
+        -0.9
+      ]
+    }
+  ],
+  "moving_parts": [
+    {
+      "id": "PIVOT_KEY_1",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        -0.185,
+        -0.092,
+        0.14
+      ],
+      "world_pivot_blender": [
+        0.265,
+        1.458,
+        1.44
+      ],
+      "world_pivot_godot": [
+        0.265,
+        1.44,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_2",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        0.0,
+        -0.092,
+        0.14
+      ],
+      "world_pivot_blender": [
+        0.45,
+        1.458,
+        1.44
+      ],
+      "world_pivot_godot": [
+        0.45,
+        1.44,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_3",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        0.185,
+        -0.092,
+        0.14
+      ],
+      "world_pivot_blender": [
+        0.635,
+        1.458,
+        1.44
+      ],
+      "world_pivot_godot": [
+        0.635,
+        1.44,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_4",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        -0.185,
+        -0.092,
+        -0.005
+      ],
+      "world_pivot_blender": [
+        0.265,
+        1.458,
+        1.295
+      ],
+      "world_pivot_godot": [
+        0.265,
+        1.295,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_5",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        0.0,
+        -0.092,
+        -0.005
+      ],
+      "world_pivot_blender": [
+        0.45,
+        1.458,
+        1.295
+      ],
+      "world_pivot_godot": [
+        0.45,
+        1.295,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_6",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        0.185,
+        -0.092,
+        -0.005
+      ],
+      "world_pivot_blender": [
+        0.635,
+        1.458,
+        1.295
+      ],
+      "world_pivot_godot": [
+        0.635,
+        1.295,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_7",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        -0.185,
+        -0.092,
+        -0.15
+      ],
+      "world_pivot_blender": [
+        0.265,
+        1.458,
+        1.15
+      ],
+      "world_pivot_godot": [
+        0.265,
+        1.15,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_8",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        0.0,
+        -0.092,
+        -0.15
+      ],
+      "world_pivot_blender": [
+        0.45,
+        1.458,
+        1.15
+      ],
+      "world_pivot_godot": [
+        0.45,
+        1.15,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_9",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        0.185,
+        -0.092,
+        -0.15
+      ],
+      "world_pivot_blender": [
+        0.635,
+        1.458,
+        1.15
+      ],
+      "world_pivot_godot": [
+        0.635,
+        1.15,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_CLR",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        -0.185,
+        -0.092,
+        -0.295
+      ],
+      "world_pivot_blender": [
+        0.265,
+        1.458,
+        1.005
+      ],
+      "world_pivot_godot": [
+        0.265,
+        1.005,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_0",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        0.0,
+        -0.092,
+        -0.295
+      ],
+      "world_pivot_blender": [
+        0.45,
+        1.458,
+        1.005
+      ],
+      "world_pivot_godot": [
+        0.45,
+        1.005,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_KEY_OK",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        0.185,
+        -0.092,
+        -0.295
+      ],
+      "world_pivot_blender": [
+        0.635,
+        1.458,
+        1.005
+      ],
+      "world_pivot_godot": [
+        0.635,
+        1.005,
+        -1.458
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.018
+    },
+    {
+      "id": "PIVOT_START_BUTTON",
+      "parent": "ASM_INPUT_PRESENT",
+      "baseline_local_blender": [
+        0.6,
+        -0.105,
+        -0.12
+      ],
+      "world_pivot_blender": [
+        1.05,
+        1.445,
+        1.18
+      ],
+      "world_pivot_godot": [
+        1.05,
+        1.18,
+        -1.445
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_godot": [
+        0,
+        0,
+        -1
+      ],
+      "travel_m": 0.025
+    },
+    {
+      "id": "PIVOT_EXIT_DOOR",
+      "parent": "ROOT_mvp_cabinet",
+      "baseline_local_blender": [
+        2.3,
+        1.85,
+        0.0
+      ],
+      "world_pivot_blender": [
+        2.3,
+        1.85,
+        0.0
+      ],
+      "world_pivot_godot": [
+        2.3,
+        0.0,
+        -1.85
+      ],
+      "motion": "translation",
+      "axis_blender": [
+        1,
+        0,
+        0
+      ],
+      "axis_godot": [
+        1,
+        0,
+        0
+      ],
+      "travel_m": 1.85
+    }
+  ],
+  "collision": {
+    "reference_glb_visible": false,
+    "shape_type": "box",
+    "proxy_count_per_era": 15,
+    "automatic_engine_collision": false,
+    "native_engine_step": "Create StaticBody3D+CollisionShape3D for static boxes; use a synchronized moving body for COL_EXIT_DOOR. Match world transforms from collision_<era>.json. Do not use detailed VIS meshes as universal collision.",
+    "dynamic_player_tested": false
+  },
+  "storyboard": {
+    "source": "../reference/storyboard.pdf",
+    "pages_read": [
+      5,
+      6
+    ],
+    "local_page_renders": [
+      "reference/storyboard-5.png",
+      "reference/storyboard-6.png"
+    ],
+    "observed_sequence": "Past readable plate -> return present and enter -> validation -> startup light -> independent startup button -> work light and exit light -> door moves. Page 6 city vista is outside this test-island scope."
+  },
+  "validation": {
+    "blender_roundtrip": "qa/roundtrip_blender.json",
+    "glb_structure": [
+      "qa/structure_past.json",
+      "qa/structure_present.json"
+    ],
+    "godot_static_import": "qa/godot_static_import.json",
+    "godot_static_tool": "Godot 4.7.2 GLTFDocument in isolated temporary project",
+    "godot_static_scope": "Four GLB files: nodes, origin, pivot positions and mesh bounds only.",
+    "actual_godot_gameplay_tested": false,
+    "team_main_project_tested": false,
+    "native_collision_generation_tested": false
+  },
+  "runtime_authority": "manifest.json#/initial_state",
+  "public_manifest": "manifest.json",
+  "schema_note": "assembly.json is geometric supporting data. Validate manifest.json, not this auxiliary object, against 公共接口.schema.json."
+}

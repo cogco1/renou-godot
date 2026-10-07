@@ -1,0 +1,97 @@
+{
+  "$schema": "./公共接口.schema.json",
+  "contract_version": "1.0",
+  "level_id": "mvp_valve",
+  "display_name": "阀门 白模示例",
+  "initial_state": {
+    "era": "present",
+    "flags": {
+      "valve_closed_past": false,
+      "exit_reached": false
+    },
+    "checkpoint_id": null
+  },
+  "anchors": {
+    "entry": null,
+    "spawn": null,
+    "exit": null,
+    "checkpoint": null,
+    "safe_return": null
+  },
+  "devices": [
+    {
+      "device_id": "valve",
+      "available_eras": [
+        "past"
+      ],
+      "actions": [
+        "close"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "solid",
+      "notes": "past时代close赋值valve_closed_past=true；只绕阀杆局部轴转动，碰撞不得挡住交互距离。"
+    },
+    {
+      "device_id": "isolation_gate",
+      "available_eras": [
+        "present",
+        "past"
+      ],
+      "actions": [
+        "inspect"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "solid",
+      "notes": "隔离门闭合状态从valve_closed_past派生；门的位置应阻汽而不堵住玩家通道，不再存一份gate_closed。"
+    },
+    {
+      "device_id": "steam_hazard",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "inspect"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "hazard",
+      "notes": "present且valve_closed_past=false时阻挡/触发失败；过去关阀后的阻汽结果必须在现在可验证。"
+    },
+    {
+      "device_id": "exit_trigger",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "enter"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "trigger",
+      "notes": "仅present且valve_closed_past=true时，实际进入出口范围才能幂等设置exit_reached=true；不新增空气墙。"
+    }
+  ],
+  "completion": {
+    "required_flags": {
+      "valve_closed_past": true,
+      "exit_reached": true
+    }
+  },
+  "reset": {
+    "default_mode": "checkpoint",
+    "restart_era": "present",
+    "checkpoint_policy": "snapshot_era_and_flags"
+  },
+  "design_pending": [
+    "正式城市落点和五个锚点尚未指定",
+    "示例仅说明接口；三关manifest以levels目录具体交接为准"
+  ],
+  "city_placement": null,
+  "local_state_rules": [
+    "flags是因果状态唯一来源，门的视觉和碰撞、蒸汽效果都由flags重建",
+    "checkpoint保存当时era和flags；restart_level恢复initial_state，不保留上一轮解谜结果"
+  ],
+  "verification": {
+    "schema": "passed",
+    "engine_runtime": "not_run"
+  }
+}
+

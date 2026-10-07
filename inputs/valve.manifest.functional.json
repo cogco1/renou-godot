@@ -1,0 +1,91 @@
+{
+  "contract_version": "1.0",
+  "city_placement": null,
+  "reset": {
+    "default_mode": "checkpoint",
+    "restart_era": "present",
+    "checkpoint_policy": "snapshot_era_and_flags"
+  },
+  "design_pending": [
+    "正式工程与城市落点未确认。",
+    "转交规格功能字段整理；源资产未导入。"
+  ],
+  "verification": {
+    "engine_runtime": "not_run_at_generation",
+    "scope": "primitive integration candidate"
+  },
+  "level_id": "mvp_valve",
+  "display_name": "阀门",
+  "initial_state": {
+    "era": "present",
+    "flags": {
+      "valve_closed_past": false,
+      "exit_reached": false
+    },
+    "checkpoint_id": null
+  },
+  "anchors": {
+    "entry": null,
+    "spawn": null,
+    "exit": null,
+    "checkpoint": null,
+    "safe_return": null
+  },
+  "devices": [
+    {
+      "device_id": "valve",
+      "available_eras": [
+        "past"
+      ],
+      "actions": [
+        "close"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "solid",
+      "config": {
+        "source_rotation_axis": "local_Y",
+        "imported_rotation_axis": null
+      }
+    },
+    {
+      "device_id": "isolation_gate",
+      "available_eras": [
+        "present",
+        "past"
+      ],
+      "actions": [
+        "inspect"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "solid"
+    },
+    {
+      "device_id": "steam_hazard",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "inspect"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "hazard"
+    },
+    {
+      "device_id": "exit_trigger",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "enter"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "trigger"
+    }
+  ],
+  "completion": {
+    "required_flags": {
+      "valve_closed_past": true,
+      "exit_reached": true
+    }
+  }
+}

@@ -1,0 +1,478 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "人偶之心 三关白模最小公共接口 1.0",
+  "description": "交接数据格式，不要求引擎运行时采用事件总线或JSON解析。根对象可以是关卡manifest或普通测试集合。",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/level_manifest"
+    },
+    {
+      "$ref": "#/$defs/test_suite"
+    }
+  ],
+  "$defs": {
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "era",
+        "flags",
+        "checkpoint_id"
+      ],
+      "properties": {
+        "era": {
+          "enum": [
+            "present",
+            "past"
+          ]
+        },
+        "flags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "boolean",
+              "number",
+              "string",
+              "null"
+            ]
+          }
+        },
+        "checkpoint_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_type",
+        "level_id"
+      ],
+      "properties": {
+        "event_type": {
+          "enum": [
+            "interact.request",
+            "era.switch.request",
+            "checkpoint.reached",
+            "reset.request",
+            "level.completed"
+          ]
+        },
+        "level_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "device_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": [
+            "boolean",
+            "number",
+            "string",
+            "null"
+          ]
+        },
+        "target_era": {
+          "enum": [
+            "present",
+            "past"
+          ]
+        },
+        "reset_mode": {
+          "enum": [
+            "checkpoint",
+            "restart_level"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "event_type": {
+                "const": "interact.request"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "device_id",
+              "action"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "event_type": {
+                "const": "era.switch.request"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "target_era"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "event_type": {
+                "const": "checkpoint.reached"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "device_id"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "event_type": {
+                "const": "reset.request"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "reset_mode"
+            ]
+          }
+        }
+      ]
+    },
+    "level_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "level_id",
+        "display_name",
+        "initial_state",
+        "anchors",
+        "devices",
+        "completion",
+        "reset",
+        "design_pending"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "contract_version": {
+          "const": "1.0"
+        },
+        "level_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "initial_state": {
+          "$ref": "#/$defs/state"
+        },
+        "anchors": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "entry",
+            "spawn",
+            "exit",
+            "checkpoint",
+            "safe_return"
+          ],
+          "properties": {
+            "entry": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            },
+            "spawn": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            },
+            "exit": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            },
+            "checkpoint": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            },
+            "safe_return": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            }
+          }
+        },
+        "devices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "device_id",
+              "available_eras",
+              "actions",
+              "pivot_anchor",
+              "collision_mode"
+            ],
+            "properties": {
+              "device_id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "available_eras": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "present",
+                    "past"
+                  ]
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "actions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "pivot_anchor": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "collision_mode": {
+                "enum": [
+                  "solid",
+                  "trigger",
+                  "hazard",
+                  "none"
+                ]
+              },
+              "notes": {
+                "type": "string"
+              },
+              "config": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "completion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required_flags"
+          ],
+          "properties": {
+            "required_flags": {
+              "type": "object",
+              "additionalProperties": {
+                "type": [
+                  "boolean",
+                  "number",
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "reset": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "default_mode",
+            "restart_era",
+            "checkpoint_policy"
+          ],
+          "properties": {
+            "default_mode": {
+              "const": "checkpoint"
+            },
+            "restart_era": {
+              "enum": [
+                "present",
+                "past"
+              ]
+            },
+            "checkpoint_policy": {
+              "const": "snapshot_era_and_flags"
+            }
+          }
+        },
+        "design_pending": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "city_placement": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "source_refs": {},
+        "whitebox_assets": {},
+        "local_state_rules": {},
+        "verification": {}
+      }
+    },
+    "test_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "test_id",
+        "level_id",
+        "given_state",
+        "steps",
+        "expected"
+      ],
+      "properties": {
+        "test_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "level_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "given_state": {
+          "$ref": "#/$defs/state"
+        },
+        "context": {
+          "type": "object"
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/event"
+          }
+        },
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "flags": {
+              "type": "object",
+              "additionalProperties": {
+                "type": [
+                  "boolean",
+                  "number",
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "era": {
+              "enum": [
+                "present",
+                "past"
+              ]
+            },
+            "checkpoint_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "completed": {
+              "type": "boolean"
+            },
+            "accepted": {
+              "type": "boolean"
+            },
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "input_mode": {
+              "enum": [
+                "gameplay",
+                "puzzle_ui",
+                "switching",
+                "resetting",
+                "completed"
+              ]
+            },
+            "notes": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "test_suite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "test_cases"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "contract_version": {
+          "const": "1.0"
+        },
+        "description": {
+          "type": "string"
+        },
+        "test_cases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/test_case"
+          }
+        }
+      }
+    }
+  }
+}
+

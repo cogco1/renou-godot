@@ -1,0 +1,395 @@
+{
+  "$schema": "./公共接口.schema.json",
+  "contract_version": "1.0",
+  "description": "公共行为验收用例，context为测试夹具，不是生产存档字段。仅定义预期，不代表已在引擎运行。expected.flags为部分断言；accepted/reason检查最后一步。 共用context键：player_on_safe_ground、target_has_ground、target_clear、input_mode；未写时采用安全可交互基准夹具，物理走位仍需引擎内验收。",
+  "test_cases": [
+    {
+      "test_id": "C01_past_change_survives_switch",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "present",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "context": {
+        "player_on_safe_ground": true,
+        "target_clear": true,
+        "input_mode": "gameplay",
+        "target_has_ground": true
+      },
+      "steps": [
+        {
+          "event_type": "era.switch.request",
+          "level_id": "mvp_valve",
+          "target_era": "past"
+        },
+        {
+          "event_type": "interact.request",
+          "level_id": "mvp_valve",
+          "device_id": "valve",
+          "action": "close"
+        },
+        {
+          "event_type": "era.switch.request",
+          "level_id": "mvp_valve",
+          "target_era": "present"
+        }
+      ],
+      "expected": {
+        "era": "present",
+        "flags": {
+          "valve_closed_past": true
+        },
+        "accepted": true,
+        "reason": null,
+        "completed": false
+      }
+    },
+    {
+      "test_id": "C02_wrong_era_rejected",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "present",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "steps": [
+        {
+          "event_type": "interact.request",
+          "level_id": "mvp_valve",
+          "device_id": "valve",
+          "action": "close"
+        }
+      ],
+      "expected": {
+        "flags": {
+          "valve_closed_past": false
+        },
+        "accepted": false,
+        "reason": "wrong_era"
+      }
+    },
+    {
+      "test_id": "C03_repeat_is_idempotent",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "past",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "steps": [
+        {
+          "event_type": "interact.request",
+          "level_id": "mvp_valve",
+          "device_id": "valve",
+          "action": "close"
+        },
+        {
+          "event_type": "interact.request",
+          "level_id": "mvp_valve",
+          "device_id": "valve",
+          "action": "close"
+        }
+      ],
+      "expected": {
+        "flags": {
+          "valve_closed_past": true
+        },
+        "accepted": true,
+        "reason": null
+      }
+    },
+    {
+      "test_id": "C04_switch_without_safe_ground",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "present",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "context": {
+        "player_on_safe_ground": false,
+        "target_clear": true,
+        "input_mode": "gameplay",
+        "target_has_ground": true
+      },
+      "steps": [
+        {
+          "event_type": "era.switch.request",
+          "level_id": "mvp_valve",
+          "target_era": "past"
+        }
+      ],
+      "expected": {
+        "era": "present",
+        "accepted": false,
+        "reason": "unsafe_switch"
+      }
+    },
+    {
+      "test_id": "C05_switch_target_occupied",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "present",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "context": {
+        "player_on_safe_ground": true,
+        "target_clear": false,
+        "input_mode": "gameplay",
+        "target_has_ground": true
+      },
+      "steps": [
+        {
+          "event_type": "era.switch.request",
+          "level_id": "mvp_valve",
+          "target_era": "past"
+        }
+      ],
+      "expected": {
+        "era": "present",
+        "accepted": false,
+        "reason": "unsafe_switch"
+      }
+    },
+    {
+      "test_id": "C06_restart_clears_puzzle",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "past",
+        "flags": {
+          "valve_closed_past": true,
+          "exit_reached": true
+        },
+        "checkpoint_id": "checkpoint"
+      },
+      "steps": [
+        {
+          "event_type": "reset.request",
+          "level_id": "mvp_valve",
+          "reset_mode": "restart_level"
+        }
+      ],
+      "expected": {
+        "era": "present",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null,
+        "completed": false,
+        "input_mode": "gameplay",
+        "accepted": true
+      }
+    },
+    {
+      "test_id": "C07_checkpoint_restores_snapshot",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "past",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "context": {
+        "player_at_anchor": "checkpoint"
+      },
+      "steps": [
+        {
+          "event_type": "checkpoint.reached",
+          "level_id": "mvp_valve",
+          "device_id": "checkpoint"
+        },
+        {
+          "event_type": "interact.request",
+          "level_id": "mvp_valve",
+          "device_id": "valve",
+          "action": "close"
+        },
+        {
+          "event_type": "reset.request",
+          "level_id": "mvp_valve",
+          "reset_mode": "checkpoint"
+        }
+      ],
+      "expected": {
+        "era": "past",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": "checkpoint",
+        "accepted": true,
+        "input_mode": "gameplay"
+      }
+    },
+    {
+      "test_id": "C08_puzzle_ui_blocks_world_interaction",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "past",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "context": {
+        "input_mode": "puzzle_ui"
+      },
+      "steps": [
+        {
+          "event_type": "interact.request",
+          "level_id": "mvp_valve",
+          "device_id": "valve",
+          "action": "close"
+        }
+      ],
+      "expected": {
+        "flags": {
+          "valve_closed_past": false
+        },
+        "accepted": false,
+        "reason": "input_blocked"
+      }
+    },
+    {
+      "test_id": "C09_exit_before_solution_not_complete",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "present",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "context": {
+        "player_at_anchor": "exit"
+      },
+      "steps": [
+        {
+          "event_type": "interact.request",
+          "level_id": "mvp_valve",
+          "device_id": "exit_trigger",
+          "action": "enter"
+        }
+      ],
+      "expected": {
+        "flags": {
+          "exit_reached": false,
+          "valve_closed_past": false
+        },
+        "completed": false,
+        "accepted": false,
+        "reason": "prerequisites_unmet"
+      }
+    },
+    {
+      "test_id": "C10_solved_and_exit_completes",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "present",
+        "flags": {
+          "valve_closed_past": true,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "context": {
+        "player_at_anchor": "exit"
+      },
+      "steps": [
+        {
+          "event_type": "interact.request",
+          "level_id": "mvp_valve",
+          "device_id": "exit_trigger",
+          "action": "enter"
+        }
+      ],
+      "expected": {
+        "flags": {
+          "exit_reached": true
+        },
+        "completed": true,
+        "accepted": true,
+        "input_mode": "completed"
+      }
+    },
+    {
+      "test_id": "C11_direct_completion_is_not_player_input",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "present",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "steps": [
+        {
+          "event_type": "level.completed",
+          "level_id": "mvp_valve"
+        }
+      ],
+      "expected": {
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "completed": false,
+        "accepted": false,
+        "reason": "output_only_event"
+      }
+    },
+    {
+      "test_id": "C12_no_checkpoint_falls_back_to_initial",
+      "level_id": "mvp_valve",
+      "given_state": {
+        "era": "past",
+        "flags": {
+          "valve_closed_past": true,
+          "exit_reached": false
+        },
+        "checkpoint_id": null
+      },
+      "steps": [
+        {
+          "event_type": "reset.request",
+          "level_id": "mvp_valve",
+          "reset_mode": "checkpoint"
+        }
+      ],
+      "expected": {
+        "era": "present",
+        "flags": {
+          "valve_closed_past": false,
+          "exit_reached": false
+        },
+        "checkpoint_id": null,
+        "accepted": true,
+        "input_mode": "gameplay"
+      }
+    }
+  ]
+}
+

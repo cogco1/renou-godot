@@ -1,0 +1,19 @@
+{
+  "date_utc": "2026-10-07T08:45:00.507435+00:00",
+  "candidate_main_project": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\20261007_Godot_MVP_Integration\\project.godot",
+  "production_main_project": null,
+  "headless_runtime": {
+    "passed": 43,
+    "failed": 0,
+    "report": "evidence/runtime-results.json"
+  },
+  "render_capture": {
+    "status": "blocked_gpu_lock",
+    "reason": "Existing shared bridge-render.lock belongs to CBD preview task, PID 7832 not present on read-only check. Other owner lock not deleted.",
+    "evidence": null
+  },
+  "human_manual_play": "not_run",
+  "source_glb_runtime_in_candidate": "not_run",
+  "exported_program": "not_run",
+  "no_upload": true
+}

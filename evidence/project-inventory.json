@@ -1,0 +1,52 @@
+{
+  "utc": "2026-10-07T08:37:41.879421+00:00",
+  "production_project": "unconfirmed",
+  "candidate_scope": "existing known roots, excluding own candidate and caches",
+  "scans": [
+    {
+      "root": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心",
+      "exists": true,
+      "directories_read": 2373,
+      "max_depth": 12,
+      "directory_cap": 20000,
+      "hit_cap": false,
+      "errors": []
+    },
+    {
+      "root": "D:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心",
+      "exists": true,
+      "directories_read": 29,
+      "max_depth": 12,
+      "directory_cap": 20000,
+      "hit_cap": false,
+      "errors": []
+    },
+    {
+      "root": "C:\\Users\\asus\\Documents\\ChatGPT\\竞赛",
+      "exists": true,
+      "directories_read": 226,
+      "max_depth": 12,
+      "directory_cap": 20000,
+      "hit_cap": false,
+      "errors": []
+    }
+  ],
+  "existing_candidates": [
+    {
+      "path": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\20261007_mvp_bridge_handoff\\project.godot",
+      "preview": "; Independent bridge test island. Not the shared integration project.\nconfig_version=5\n\n[application]\nconfig/name=\"mvp_bridge - isolated local stub\"\nrun/main_scene=\"res://scenes/bridge_island.tscn\"\nconfig/features=PackedStringArray(\"4.7\", \"GL Compatibility\")\n\n[display]\nwindow/size/viewport_width=1280\nwindow/size/viewport_height=720\nwindow/size/window_width_override=1280\nwindow/size/window_height_override=720\n\n[rendering]\nrenderer/rendering_method=\"gl_compatibility\"\nrenderer/rendering_method.mobile=\"gl_compatibility\"\ntextures/default_filters/use_nearest_mipmap_filter=false\n"
+    },
+    {
+      "path": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\20261007_mvp_cabinet_handoff\\project.godot",
+      "preview": "; Independent local fixture only. No autoloads. Not the formal team project.\nconfig_version=5\n[application]\nconfig/name=\"mvp_cabinet LOCAL STUB\"\nrun/main_scene=\"res://scenes/cabinet_island.tscn\"\nconfig/features=PackedStringArray(\"4.7\", \"GL Compatibility\")\n[display]\nwindow/size/viewport_width=1280\nwindow/size/viewport_height=720\nwindow/size/window_width_override=1280\nwindow/size/window_height_override=720\n[rendering]\nrenderer/rendering_method=\"gl_compatibility\"\nrenderer/rendering_method.mobile=\"gl_compatibility\"\ntextures/default_filters/use_nearest_mipmap_filter=false\n"
+    },
+    {
+      "path": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\20261007_mvp_valve_关卡交接\\v001\\project.godot",
+      "preview": "; Independent local candidate. NOT the shared integration project.\nconfig_version=5\n\n[application]\nconfig/name=\"mvp_valve LOCAL STUB candidate\"\nrun/main_scene=\"res://scenes/valve_test_island.tscn\"\n\n[display]\nwindow/size/viewport_width=1280\nwindow/size/viewport_height=720\nwindow/size/window_width_override=1280\nwindow/size/window_height_override=720\n\n[rendering]\nrenderer/rendering_method=\"gl_compatibility\"\nrenderer/rendering_method.mobile=\"gl_compatibility\"\nenvironment/defaults/default_clear_color=Color(0.06,0.08,0.10,1)\n"
+    }
+  ],
+  "own_test_project": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\20261007_Godot_MVP_Integration\\project.godot",
+  "initial_scan_depth": 6,
+  "godot_version": "4.7.2.stable.official.ed1daf0bf",
+  "engine": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\tools\\godot-4.7.2\\Godot_v4.7.2-stable_win64_console.exe"
+}

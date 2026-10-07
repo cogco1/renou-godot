@@ -1,0 +1,95 @@
+{
+  "contract_version": "1.0",
+  "city_placement": null,
+  "reset": {
+    "default_mode": "checkpoint",
+    "restart_era": "present",
+    "checkpoint_policy": "snapshot_era_and_flags"
+  },
+  "design_pending": [
+    "正式工程与城市落点未确认。",
+    "转交规格功能字段整理；源资产未导入。"
+  ],
+  "verification": {
+    "engine_runtime": "not_run_at_generation",
+    "scope": "temporary local anchors; primitive only; explicit test mode"
+  },
+  "level_id": "mvp_cabinet",
+  "display_name": "配电箱",
+  "initial_state": {
+    "era": "present",
+    "flags": {
+      "clue_seen": false,
+      "cabinet_unlocked": false,
+      "power_on": false,
+      "exit_reached": false
+    },
+    "checkpoint_id": null
+  },
+  "anchors": {
+    "entry": "Anchors/Entry",
+    "spawn": "Anchors/Spawn",
+    "exit": "Anchors/Exit",
+    "checkpoint": "Anchors/Checkpoint",
+    "safe_return": "Anchors/SafeReturn"
+  },
+  "devices": [
+    {
+      "device_id": "plaque",
+      "available_eras": [
+        "past"
+      ],
+      "actions": [
+        "read"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "none"
+    },
+    {
+      "device_id": "cabinet",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "submit_code"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "solid",
+      "config": {
+        "final_code": null,
+        "test_mode": true,
+        "test_code": "0427",
+        "test_code_status": "fixture_only_not_approved_story",
+        "input_length": null
+      }
+    },
+    {
+      "device_id": "start_button",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "press"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "none"
+    },
+    {
+      "device_id": "exit_trigger",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "enter"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "trigger"
+    }
+  ],
+  "completion": {
+    "required_flags": {
+      "power_on": true,
+      "exit_reached": true
+    }
+  }
+}

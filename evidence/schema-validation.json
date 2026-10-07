@@ -1,0 +1,50 @@
+{
+  "kind": "static_only_not_runtime",
+  "results": [
+    {
+      "file": "contracts\\mvp_bridge.json",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "file": "contracts\\mvp_cabinet.json",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "file": "contracts\\mvp_valve.json",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "file": "inputs\\bridge.manifest.functional.json",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "file": "inputs\\cabinet.manifest.functional.json",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "file": "inputs\\valve.manifest.functional.json",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "file": "inputs\\asset_delivery\\L01_BRIDGE\\manifest.json",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "file": "inputs\\asset_delivery\\L02_VALVE\\manifest.json",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "file": "inputs\\asset_delivery\\L03_CABINET\\manifest.json",
+      "passed": true,
+      "errors": []
+    }
+  ]
+}

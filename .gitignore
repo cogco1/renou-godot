@@ -1,0 +1,11 @@
+# Godot 4
+.godot/
+*.import.tmp
+export_presets.cfg
+/build/
+/release/*.zip
+*.translation
+# OS / editor
+.DS_Store
+Thumbs.db
+*.blend1

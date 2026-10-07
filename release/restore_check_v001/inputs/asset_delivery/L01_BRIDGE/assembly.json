@@ -1,0 +1,188 @@
+{
+  "level_id": "mvp_bridge",
+  "asset_prefix": "L01_BRIDGE",
+  "status": "geometry_delivery_engine_mechanism_unverified",
+  "units": "meters",
+  "authoring_coordinates": {
+    "up": "Z",
+    "bridge_axis": "X",
+    "deck_z": 0,
+    "root_translation": [
+      0,
+      0,
+      0
+    ],
+    "root_rotation_degrees": [
+      0,
+      0,
+      0
+    ],
+    "root_scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  "export_coordinates": {
+    "format": "glTF_2_GLB",
+    "up": "Y",
+    "to_gltf_position": "(x,y,z)_Blender -> (x,z,-y)_glTF",
+    "Godot_import": "native glTF import; do not add -90 degree rotation or x100 scale"
+  },
+  "initial_state": {
+    "era": "present",
+    "flags": {
+      "bridge_crossed_past": false,
+      "bridge_returned_present": false,
+      "exit_reached": false
+    },
+    "checkpoint_id": null
+  },
+  "era_assets": {
+    "present": {
+      "visual": "export/mvp_bridge_present.glb",
+      "proxies": "export/mvp_bridge_present_proxies.glb"
+    },
+    "past": {
+      "visual": "export/mvp_bridge_past.glb",
+      "proxies": "export/mvp_bridge_past_proxies.glb"
+    }
+  },
+  "nominal_bridge": {
+    "length_m": 18,
+    "clear_width_m": 3,
+    "endpoints_m": [
+      [
+        -9,
+        0,
+        0
+      ],
+      [
+        9,
+        0,
+        0
+      ]
+    ],
+    "past_deck": "continuous",
+    "present_deck": "broken; never permanently repaired",
+    "present_proxy_open_gap_m": 5.5,
+    "broken_tip_collision": "conservative non-walkable tips, proposal"
+  },
+  "moving_parts": [],
+  "states": {
+    "present": {
+      "visual_set": "present",
+      "collision_set": "present",
+      "bridge_complete": false
+    },
+    "past": {
+      "visual_set": "past",
+      "collision_set": "past",
+      "bridge_complete": true
+    }
+  },
+  "reset": [
+    "checkpoint: restore saved era and flags snapshot; no snapshot restores initial_state and spawn.",
+    "restart_level: clear this level checkpoint and transient actions; restore initial_state and spawn.",
+    "Restore visual/collision set from era; never repair the present bridge.",
+    "Safe switch failure rejects switch and preserves era/position/flags; safe_return is not an automatic puzzle bypass."
+  ],
+  "collision_import": "COL meshes are box proxy geometry; convert to StaticBody3D/BoxShape3D. PROXY_GAP_RETURN is trigger proposal only, never solid. Hide all proxy meshes. Only activate selected era collision set.",
+  "scope": "Static geometry package and assembly proposal, no verified Godot gameplay.",
+  "contract_version": "1.0",
+  "anchor_details": {
+    "entry": {
+      "node": "ANCHOR_ENTRY",
+      "position_blender_m": [
+        -11,
+        0,
+        0
+      ],
+      "position_godot_m": [
+        -11,
+        0,
+        0
+      ],
+      "status": "proposal"
+    },
+    "exit": {
+      "node": "ANCHOR_EXIT",
+      "position_blender_m": [
+        11,
+        0,
+        0
+      ],
+      "position_godot_m": [
+        11,
+        0,
+        0
+      ],
+      "status": "proposal"
+    },
+    "safe_return_entry": {
+      "node": "ANCHOR_SAFE_RETURN_ENTRY",
+      "position_blender_m": [
+        -10.5,
+        0,
+        0
+      ],
+      "position_godot_m": [
+        -10.5,
+        0,
+        0
+      ],
+      "status": "proposal"
+    },
+    "safe_return_exit": {
+      "node": "ANCHOR_SAFE_RETURN_EXIT",
+      "position_blender_m": [
+        10.5,
+        0,
+        0
+      ],
+      "position_godot_m": [
+        10.5,
+        0,
+        0
+      ],
+      "status": "proposal"
+    },
+    "bridge_in": {
+      "node": "ANCHOR_BRIDGE_IN",
+      "position_blender_m": [
+        -9,
+        0,
+        0
+      ],
+      "position_godot_m": [
+        -9,
+        0,
+        0
+      ],
+      "status": "proposal"
+    },
+    "bridge_out": {
+      "node": "ANCHOR_BRIDGE_OUT",
+      "position_blender_m": [
+        9,
+        0,
+        0
+      ],
+      "position_godot_m": [
+        9,
+        0,
+        0
+      ],
+      "status": "proposal"
+    }
+  },
+  "anchors": {
+    "entry": "ANCHOR_ENTRY",
+    "spawn": "ANCHOR_ENTRY",
+    "exit": "ANCHOR_EXIT",
+    "checkpoint": "ANCHOR_SAFE_RETURN_ENTRY",
+    "safe_return": "ANCHOR_SAFE_RETURN_ENTRY"
+  },
+  "city_placement": null,
+  "state_source": "manifest.json initial_state.flags; assembly initial_state is a generated copy, never a second runtime store"
+}

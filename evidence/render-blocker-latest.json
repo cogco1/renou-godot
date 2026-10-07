@@ -1,0 +1,11 @@
+{
+  "checked_utc": "2026-10-07T08:46:48.6475981Z",
+  "status": "render_capture_not_run_due_to_shared_lock",
+  "current_lock": {
+    "pid": 30912,
+    "token": "13d79001f7b34db8baeab42e59502656",
+    "output": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\20261006_帝国公共建筑原型\\palace_fixed_shot\\previews\\v4\\v4_tower.png",
+    "created": 1791362752.6822767
+  },
+  "action": "No other owner lock was modified; headless and exact ZIP restore verification complete."
+}

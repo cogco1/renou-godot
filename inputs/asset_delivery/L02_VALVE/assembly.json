@@ -1,0 +1,335 @@
+{
+  "level_id": "mvp_valve",
+  "revision": "v001",
+  "asset_scope": "independent test island",
+  "target_engine": "Godot 4.7.2 static import verified by recorded SHA256; team project/runtime untested",
+  "coordinate_system": {
+    "authoring": "Blender meters Z-up",
+    "exchange": "glTF/Godot meters Y-up",
+    "conversion": "(x,y,z)_Blender -> (x,z,-y)_glTF; exporter applies once; do not rotate imported Godot root again",
+    "root_origin": [
+      0,
+      0,
+      0
+    ],
+    "root_scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  "files": {
+    "editable": "source/mvp_valve.blend",
+    "visual": "export/mvp_valve.glb",
+    "proxies": "export/mvp_valve_proxies.glb",
+    "isolated_visual_snapshot": "export/mvp_valve_isolated_snapshot.glb",
+    "isolated_proxy_snapshot": "export/mvp_valve_isolated_proxies_snapshot.glb"
+  },
+  "initial_state": {
+    "era": "present",
+    "flags": {
+      "valve_closed_past": false,
+      "exit_reached": false
+    },
+    "checkpoint_id": null
+  },
+  "flags_status": "contract_version 1.0; sole state source is initial_state.flags",
+  "states": {
+    "present": {
+      "interactable_valve": false,
+      "geometry_asset": "shared",
+      "derivation": "gate closed iff flags.valve_closed_past; source steam remains enabled; corridor hazard active iff gate open"
+    },
+    "past": {
+      "interactable_valve": true,
+      "geometry_asset": "shared",
+      "derivation": "gate closed iff flags.valve_closed_past; no present steam corridor effect"
+    }
+  },
+  "geometry_bindings": {
+    "valve_closed_past": {
+      "false": {
+        "gate_blender_position": [
+          3.75,
+          0.25,
+          0
+        ],
+        "handwheel_L_y_radians": 0,
+        "steam_barrier_active": false,
+        "present_corridor_hazard_active": true
+      },
+      "true": {
+        "gate_blender_position": [
+          1.1,
+          0.25,
+          0
+        ],
+        "handwheel_L_y_radians": 1.5707963267948966,
+        "steam_barrier_active": true,
+        "present_corridor_hazard_active": false
+      }
+    },
+    "steam_source_region": "AREA_SteamSource stays present even after closure; this is not a turn-off-particles puzzle"
+  },
+  "moving_parts": [
+    {
+      "id": "MOV_Handwheel_L",
+      "pivot_local_blender_m": [
+        -0.83,
+        -0.66,
+        1.28
+      ],
+      "axis_local_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_local_godot": [
+        0,
+        0,
+        -1
+      ],
+      "rotation_radians_proposal": 1.5707963267948966,
+      "binding": "primary valve_closed_past control"
+    },
+    {
+      "id": "MOV_Handwheel_R",
+      "pivot_local_blender_m": [
+        0.83,
+        -0.66,
+        1.28
+      ],
+      "axis_local_blender": [
+        0,
+        1,
+        0
+      ],
+      "axis_local_godot": [
+        0,
+        0,
+        -1
+      ],
+      "binding": "retained independent source control; unbound, not a second required puzzle action"
+    },
+    {
+      "id": "PIVOT_IsolationGate",
+      "child": "MOV_IsolationGate",
+      "matching_proxy": "PIVOT_IsolationGate_Proxy/COL_IsolationGate",
+      "axis_blender": [
+        1,
+        0,
+        0
+      ],
+      "closed_blender_m": [
+        1.1,
+        0.25,
+        0
+      ],
+      "open_blender_m": [
+        3.75,
+        0.25,
+        0
+      ],
+      "travel_m": 2.65,
+      "proposal": true
+    }
+  ],
+  "reset_checklist": [
+    "restart_level: restore initial_state.flags={valve_closed_past:false,exit_reached:false}, checkpoint_id=null",
+    "Set era=present",
+    "Apply gate OPEN pose to visual and proxy pivot",
+    "Reset handwheel L and R rotations to zero",
+    "Enable equipment-room source steam and present corridor hazard",
+    "Disable steam barrier",
+    "Enable present valve locked response; no interaction progress",
+    "Return player only to validated MARKER_SafeReturn proposal"
+  ],
+  "dimensions_proposal": {
+    "test_floor_m": [
+      10,
+      6,
+      0.3
+    ],
+    "clear_gate_m": [
+      2.4,
+      2.7
+    ],
+    "leaf_m": [
+      2.5,
+      0.2,
+      2.75
+    ]
+  },
+  "limitations": [
+    "Blender export/reimport, visual QA, and isolated Godot 4.7.2 GLTFDocument static import are verified",
+    "Team main-project import, collision generation, Area3D logic, player safety, timing and persistence runtime remain unaccepted",
+    "Compartment and floor are test blockout, not approved main-level location",
+    "No age/rust repaint or final art added; eras share source visual shell"
+  ],
+  "contract_version": "1.0",
+  "anchor_details": [
+    {
+      "id": "MARKER_Entrance",
+      "proposal": true,
+      "blender_zup_m": [
+        -4.4,
+        -2.1,
+        0
+      ],
+      "gltf_godot_yup_m": [
+        -4.4,
+        0,
+        2.1
+      ]
+    },
+    {
+      "id": "MARKER_Exit",
+      "proposal": true,
+      "blender_zup_m": [
+        4.4,
+        -2.1,
+        0
+      ],
+      "gltf_godot_yup_m": [
+        4.4,
+        0,
+        2.1
+      ]
+    },
+    {
+      "id": "MARKER_SafeReturn",
+      "proposal": true,
+      "blender_zup_m": [
+        -3.5,
+        -2.1,
+        0
+      ],
+      "gltf_godot_yup_m": [
+        -3.5,
+        0,
+        2.1
+      ]
+    },
+    {
+      "id": "MARKER_ValveInteract",
+      "proposal": true,
+      "blender_zup_m": [
+        -3.43,
+        -0.4,
+        1.28
+      ],
+      "gltf_godot_yup_m": [
+        -3.43,
+        1.28,
+        0.4
+      ]
+    },
+    {
+      "id": "MARKER_GateClosed",
+      "proposal": true,
+      "blender_zup_m": [
+        1.1,
+        0.25,
+        0
+      ],
+      "gltf_godot_yup_m": [
+        1.1,
+        0,
+        -0.25
+      ]
+    },
+    {
+      "id": "MARKER_GateOpen",
+      "proposal": true,
+      "blender_zup_m": [
+        3.75,
+        0.25,
+        0
+      ],
+      "gltf_godot_yup_m": [
+        3.75,
+        0,
+        -0.25
+      ]
+    },
+    {
+      "id": "MARKER_SteamSource",
+      "proposal": true,
+      "blender_zup_m": [
+        1.1,
+        2.3,
+        1.0
+      ],
+      "gltf_godot_yup_m": [
+        1.1,
+        1.0,
+        -2.3
+      ]
+    }
+  ],
+  "anchors": {
+    "entry": "MARKER_Entrance",
+    "spawn": "MARKER_Entrance",
+    "exit": "MARKER_Exit",
+    "checkpoint": "MARKER_SafeReturn",
+    "safe_return": "MARKER_SafeReturn"
+  },
+  "anchors_status": "All positions are test-island proposals; player capsule and main-level placement require runtime verification",
+  "city_placement": null,
+  "device_bindings": [
+    {
+      "device_id": "valve",
+      "node": "MOV_Handwheel_L",
+      "secondary_unbound_node": "MOV_Handwheel_R",
+      "interaction_region": "AREA_ValveInteraction"
+    },
+    {
+      "device_id": "isolation_gate",
+      "node": "PIVOT_IsolationGate",
+      "collision_node": "PIVOT_IsolationGate_Proxy"
+    },
+    {
+      "device_id": "steam_hazard",
+      "source_region": "AREA_SteamSource",
+      "corridor_region": "AREA_SteamCorridor",
+      "barrier_region": "AREA_SteamBarrier"
+    },
+    {
+      "device_id": "exit_trigger",
+      "node": "MARKER_Exit",
+      "note": "Marker position only; programmer must create and test exit trigger volume"
+    }
+  ],
+  "completion": {
+    "required_flags": {
+      "valve_closed_past": true,
+      "exit_reached": true
+    }
+  },
+  "reset": {
+    "checkpoint": "Save and restore an era + flags snapshot with checkpoint_id; geometry is derived from those flags",
+    "restart_level": "Restore initial_state exactly, then derive geometry and steam regions; do not retain a separate door-state variable"
+  },
+  "validation_reports": {
+    "blender": "qa/roundtrip.json",
+    "godot_static": "qa/godot_static_import.json",
+    "visual": "qa/visual_review.json"
+  },
+  "assembly_bbox_blender_m": {
+    "min": [
+      -5.0,
+      -3.0,
+      -0.30000001192092896
+    ],
+    "max": [
+      5.0,
+      3.0,
+      3.1599998474121094
+    ],
+    "size": [
+      10.0,
+      6.0,
+      3.4599998593330383
+    ]
+  }
+}

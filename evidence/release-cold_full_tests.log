@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS startup_floor | Candidate main scene loaded; 1.8 m capsule grounded
+PASS snapshot_isolation | Public snapshot mutation cannot write authority
+PASS duplicate_device | Duplicate IDs refused before registration
+PASS output_only | No player-forged completion
+PASS unknown_device | Unknown stable ID refused
+PASS era_before_range | present valve unavailable even when out of range
+PASS safe_switch | Ground/capsule queries accept safe platform
+PASS range_enforced | Spawn > 2.5 m from device
+PASS valve_close | Real in-range past close changes flag
+PASS same_frame_debounce | Second accepted-world-operation attempt in same physics frame refused
+PASS idempotent_close | Later repeated close never toggles open
+PASS valve_persists | present rebuild removes steam and closes SIDE isolation leaf
+PASS checkpoint_snapshot | Restores complete era/flags snapshot plus actual checkpoint position
+PASS no_target_ground | Bridge center: no target ground; no teleport or flag change
+PASS airborne_rejected | Airborne player cannot switch
+PASS level_state_retention | Switching active scene retains other level runtime state
+PASS restart_clears | Restart resets flag, era, checkpoint and derived hazard
+PASS open_ui | Present and true device range required
+PASS ui_blocks_world | Movement and era switch blocked while UI owns input
+PASS empty_code | Empty input not accepted; world control restored
+PASS wrong_code | Wrong code retry has no soft lock
+PASS known_code_without_clue | Explicit fixture code unlocks without artificial clue_seen prerequisite
+PASS wrong_after_unlock | Wrong later attempt does not relock
+PASS reset_cancels_ui | No checkpoint: initial state+spawn; resets UI lock
+PASS button_prerequisite | No start before unlock
+PASS capsule_wall_rejected | Standing on safe past ground, target-era obstacle occupies full player capsule
+PASS production_code_missing | test_mode=false plus final_code=null cannot accept fixture code
+PASS unsolved_exit | Actual exit range cannot bypass unsolved cabinet; no direct completion
+PASS exit_wrong_era_priority | Past present-only exit reports era before prerequisites
+PASS ui_blocks_interact | UI blocks world interaction before range/prerequisites
+PASS escape_ui_focus | Real Escape event cancels focused LineEdit via _input
+PASS bridge_route_1 | W/Q/W through continuous past bridge, real far trigger, present exit; start to finish
+PASS bridge_completion_once_1 | Remaining in exit does not repeat completion
+PASS completed_free_1 | completed allows movement and safe switch
+PASS bridge_route_2 | W/Q/W through continuous past bridge, real far trigger, present exit; start to finish
+PASS bridge_completion_once_2 | Remaining in exit does not repeat completion
+PASS completed_free_2 | completed allows movement and safe switch
+PASS present_gap_fall | Present gap cannot be jumped with this player; actual fall restores checkpoint
+PASS steam_failure_recovery | Walking unsolved present steam triggers the shared checkpoint reset; hazard/state rebuilt
+PASS valve_route_1 | Spawn/Q/W/E/Q/W: past valve, present physical route, real exit trigger
+PASS valve_route_2 | Spawn/Q/W/E/Q/W: past valve, present physical route, real exit trigger
+PASS cabinet_route | Spawn to clue, real UI submit signal, button and open-door collision route
+PASS cabinet_lights_collision | Present flag projects into both door body+mesh transform and working lights
+MVP_TEST_SUMMARY 43/43 passed

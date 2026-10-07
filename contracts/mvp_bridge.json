@@ -1,0 +1,66 @@
+{
+  "contract_version": "1.0",
+  "city_placement": null,
+  "reset": {
+    "default_mode": "checkpoint",
+    "restart_era": "present",
+    "checkpoint_policy": "snapshot_era_and_flags"
+  },
+  "design_pending": [
+    "正式工程与城市落点未确认。",
+    "转交规格功能字段整理；源资产未导入。"
+  ],
+  "verification": {
+    "engine_runtime": "not_run_at_generation",
+    "scope": "temporary local anchors; primitive only; explicit test mode"
+  },
+  "level_id": "mvp_bridge",
+  "display_name": "断桥",
+  "initial_state": {
+    "era": "present",
+    "flags": {
+      "bridge_crossed_past": false,
+      "bridge_returned_present": false,
+      "exit_reached": false
+    },
+    "checkpoint_id": null
+  },
+  "anchors": {
+    "entry": "Anchors/Entry",
+    "spawn": "Anchors/Spawn",
+    "exit": "Anchors/Exit",
+    "checkpoint": "Anchors/Checkpoint",
+    "safe_return": "Anchors/SafeReturn"
+  },
+  "devices": [
+    {
+      "device_id": "far_landing",
+      "available_eras": [
+        "past"
+      ],
+      "actions": [
+        "enter"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "trigger"
+    },
+    {
+      "device_id": "exit_trigger",
+      "available_eras": [
+        "present",
+        "past"
+      ],
+      "actions": [
+        "enter"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "trigger"
+    }
+  ],
+  "completion": {
+    "required_flags": {
+      "bridge_crossed_past": true,
+      "exit_reached": true
+    }
+  }
+}

@@ -1,0 +1,427 @@
+{
+  "$schema": "公共接口.schema.json",
+  "contract_version": "1.0",
+  "level_id": "mvp_cabinet",
+  "display_name": "配电箱 · 独立双时代测试岛",
+  "initial_state": {
+    "era": "present",
+    "flags": {
+      "clue_seen": false,
+      "cabinet_unlocked": false,
+      "power_on": false,
+      "exit_reached": false
+    },
+    "checkpoint_id": null
+  },
+  "anchors": {
+    "entry": "MARKER_ENTRY_PROPOSAL",
+    "spawn": "MARKER_ENTRY_PROPOSAL",
+    "exit": "MARKER_EXIT_PROPOSAL",
+    "checkpoint": "MARKER_SAFE_RETURN_PROPOSAL",
+    "safe_return": "MARKER_SAFE_RETURN_PROPOSAL"
+  },
+  "devices": [
+    {
+      "device_id": "plaque",
+      "available_eras": [
+        "past"
+      ],
+      "actions": [
+        "read"
+      ],
+      "pivot_anchor": "ASM_PASSWORD_PLATE",
+      "collision_mode": "none",
+      "notes": "clue_seen只用于提示；不强制挡住已知正确密码的玩家"
+    },
+    {
+      "device_id": "cabinet",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "submit_code"
+      ],
+      "pivot_anchor": "ASM_INPUT_PRESENT",
+      "collision_mode": "solid",
+      "notes": "正确码只解锁按钮；错误立即可重试；解锁后错误不回锁",
+      "config": {
+        "final_code": null,
+        "test_mode": true,
+        "test_code": "0427",
+        "test_code_status": "fixture_only_not_approved_story",
+        "input_length": null,
+        "test_config_file": "test_config.json"
+      }
+    },
+    {
+      "device_id": "start_button",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "press"
+      ],
+      "pivot_anchor": "PIVOT_START_BUTTON",
+      "collision_mode": "none",
+      "notes": "cabinet_unlocked为true才可按；按后power_on=true"
+    },
+    {
+      "device_id": "exit_trigger",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "enter"
+      ],
+      "pivot_anchor": "MARKER_EXIT_PROPOSAL",
+      "collision_mode": "trigger",
+      "notes": "present且power_on才记完成；本包仅交位置Marker，需程序建立Area3D，不新增空气墙"
+    }
+  ],
+  "completion": {
+    "required_flags": {
+      "power_on": true,
+      "exit_reached": true
+    }
+  },
+  "reset": {
+    "default_mode": "checkpoint",
+    "restart_era": "present",
+    "checkpoint_policy": "snapshot_era_and_flags"
+  },
+  "city_placement": null,
+  "design_pending": [
+    "Godot 4.7.2独立静态GLTFDocument导入已验；团队主工程/玩家/物理运行未验。",
+    "city_placement=null；锚点均为独立测试岛proposal，不是正式城市坐标。",
+    "不安全切时代处理由公共程序统一；本包未实现玩家胶囊净空逻辑。",
+    "正式密码字符及长度未定；本manifest是明确test_mode=true的测试包，0427仅TEST fixture，final_code=null。",
+    "past出口门与灯的运行原态未细定；保留美术基线，禁止复制present power_on结果。",
+    "按钮/灯/门时序与交互距离待游戏内调整；不新增接线、失败次数锁定或强制clue_seen门槛。"
+  ],
+  "source_refs": [
+    {
+      "title": "三关剧情PDF",
+      "url": "https://drive.google.com/file/d/1VXqf9PI0evItEHPUgYvAlvREhUwhHVtE/view",
+      "local_file": "../reference/storyboard.pdf",
+      "locator": "第5–6页",
+      "status": "text_and_page_images_actually_read",
+      "notes": "本关reference含两页真实PNG"
+    },
+    {
+      "title": "L1_PANEL_BANK原始past/future资产",
+      "local_manifest": "source_manifest.json",
+      "status": "actual_glb_imported_and_source_hashes_verified",
+      "notes": "原future映射present；包内source/reused复制保持相同SHA-256；原BLEND/GLB均未修改"
+    },
+    {
+      "title": "公共接口合同1.0",
+      "local_file": "公共接口.schema.json",
+      "status": "exact_shared_schema_copy",
+      "notes": "manifest由对应配电箱template填入已实测资产"
+    }
+  ],
+  "whitebox_assets": {
+    "status": "delivered_geometry_checked",
+    "count_basis": "按实际源资产和功能部件保留独立节点，不为建议件数重拆柜体；详见objects JSON",
+    "items": [
+      {
+        "asset_id": "cabinet_bank",
+        "roles": [
+          "shell"
+        ],
+        "visible_eras": [
+          "past",
+          "present"
+        ],
+        "delivery_status": "delivered",
+        "actual_export_files": [
+          "mvp_cabinet_past.glb",
+          "mvp_cabinet_present.glb"
+        ],
+        "pivot_node": "ASM_CABINET_BANK",
+        "notes": "原三柜未重建，保留仪表/断路器/闸刀以及源检修门轴"
+      },
+      {
+        "asset_id": "password_plate",
+        "roles": [
+          "shell",
+          "interact"
+        ],
+        "visible_eras": [
+          "past",
+          "present"
+        ],
+        "delivery_status": "delivered",
+        "actual_export_files": [
+          "mvp_cabinet_past.glb",
+          "mvp_cabinet_present.glb"
+        ],
+        "pivot_node": "ASM_PASSWORD_PLATE",
+        "notes": "past清楚TEST码，present不可读"
+      },
+      {
+        "asset_id": "input_panel",
+        "roles": [
+          "shell",
+          "interact",
+          "moving"
+        ],
+        "visible_eras": [
+          "present"
+        ],
+        "delivery_status": "delivered",
+        "actual_export_files": [
+          "mvp_cabinet_present.glb"
+        ],
+        "pivot_node": "ASM_INPUT_PRESENT",
+        "notes": "可整体隐藏；12个key pivot和独立启动键，不能并回柜壳"
+      },
+      {
+        "asset_id": "past_blank_cover",
+        "roles": [
+          "shell"
+        ],
+        "visible_eras": [
+          "past"
+        ],
+        "delivery_status": "delivered",
+        "actual_export_files": [
+          "mvp_cabinet_past.glb"
+        ],
+        "pivot_node": "ASM_COVER_PAST",
+        "notes": "键盘和启动位置均为无按钮盖板"
+      },
+      {
+        "asset_id": "start_button",
+        "roles": [
+          "moving",
+          "interact"
+        ],
+        "visible_eras": [
+          "present"
+        ],
+        "delivery_status": "delivered",
+        "actual_export_files": [
+          "mvp_cabinet_present.glb"
+        ],
+        "pivot_node": "PIVOT_START_BUTTON",
+        "notes": "0.025m独立下压，cabinet_unlocked后才有效"
+      },
+      {
+        "asset_id": "exit_frame",
+        "roles": [
+          "shell"
+        ],
+        "visible_eras": [
+          "past",
+          "present"
+        ],
+        "delivery_status": "delivered",
+        "actual_export_files": [
+          "mvp_cabinet_past.glb",
+          "mvp_cabinet_present.glb"
+        ],
+        "pivot_node": "ASM_EXIT_FRAME",
+        "notes": "净宽1.60m，门框与轨道独立"
+      },
+      {
+        "asset_id": "exit_leaf",
+        "roles": [
+          "moving"
+        ],
+        "visible_eras": [
+          "past",
+          "present"
+        ],
+        "delivery_status": "delivered",
+        "actual_export_files": [
+          "mvp_cabinet_past.glb",
+          "mvp_cabinet_present.glb"
+        ],
+        "pivot_node": "PIVOT_EXIT_DOOR",
+        "notes": "+X1.85m位移；present按power_on，past原态未定"
+      },
+      {
+        "asset_id": "lamps",
+        "roles": [
+          "shell"
+        ],
+        "visible_eras": [
+          "present"
+        ],
+        "delivery_status": "delivered",
+        "actual_export_files": [
+          "mvp_cabinet_present.glb"
+        ],
+        "pivot_node": "ASM_LAMP_WORK",
+        "notes": "START_READY、WORK、EXIT、STANDBY各为独立对象；发光材质供程序绑定"
+      }
+    ],
+    "local_space": {
+      "units": "meter",
+      "paired_era_origin": "ROOT_mvp_cabinet identity",
+      "paired_era_scale": "1,1,1",
+      "paired_era_orientation": "shared",
+      "engine": "Godot",
+      "engine_version": "4.7.2.stable.official.ed1daf0bf",
+      "project_godot": null,
+      "axis_conversion": "Blender Z-up -> glTF/Godot Y-up once: (x,y,z)->(x,z,-y)"
+    },
+    "geometry_metadata": "assembly.json",
+    "object_inventories": [
+      "objects_past.json",
+      "objects_present.json"
+    ],
+    "collision_files": [
+      "mvp_cabinet_past_collision.glb",
+      "mvp_cabinet_present_collision.glb"
+    ],
+    "collision_shapes": [
+      "collision_past.json",
+      "collision_present.json"
+    ],
+    "editable_files": [
+      "mvp_cabinet_past.blend",
+      "mvp_cabinet_present.blend"
+    ],
+    "anchors_status": "proposal",
+    "floor_m": [
+      10,
+      6
+    ],
+    "root_origin": [
+      0,
+      0,
+      0
+    ],
+    "rebuild_script": "build_cabinet_mvp.py",
+    "reused_sources": "source/reused"
+  },
+  "local_state_rules": {
+    "status": "implementation_spec_not_runtime",
+    "source_of_truth": "initial_state.flags；运行时由共享状态持有，视觉/碰撞从状态派生",
+    "idempotence": "赋值而非切换或累加；输入去抖；首次满足完成条件只发一次 level.completed",
+    "reset_semantics": {
+      "checkpoint": "恢复最近合法检查点的era与本关flags快照；没有快照则回本关初态安全出生点",
+      "restart_level": "清除本关状态并恢复initial_state，不清除其他关卡",
+      "reload": "从保存的权威状态重建全部外观、动件终态和碰撞"
+    },
+    "transitions": [
+      {
+        "event": {
+          "event_type": "interact.request",
+          "level_id": "mvp_cabinet",
+          "device_id": "plaque",
+          "action": "read"
+        },
+        "requires": [
+          "era==past",
+          "真实可读/交互范围"
+        ],
+        "assign": {
+          "clue_seen": true
+        },
+        "otherwise": "wrong_era或out_of_range"
+      },
+      {
+        "event": {
+          "event_type": "interact.request",
+          "level_id": "mvp_cabinet",
+          "device_id": "cabinet",
+          "action": "submit_code",
+          "value": null
+        },
+        "requires": [
+          "era==present",
+          "有效密码UI",
+          "输入等于final_code，或显式test_mode时等于test_code"
+        ],
+        "assign": {
+          "cabinet_unlocked": true
+        },
+        "otherwise": "wrong_code或wrong_era或config_missing；flags不变、可立即重试",
+        "notes": "clue_seen不是前置；final_code=null且test_mode=false应报告配置缺失，不把空码当正确"
+      },
+      {
+        "event": {
+          "event_type": "interact.request",
+          "level_id": "mvp_cabinet",
+          "device_id": "start_button",
+          "action": "press"
+        },
+        "requires": [
+          "era==present",
+          "cabinet_unlocked==true",
+          "有效交互距离和视线"
+        ],
+        "assign": {
+          "power_on": true
+        },
+        "otherwise": "prerequisites_unmet或wrong_era"
+      },
+      {
+        "event": {
+          "event_type": "interact.request",
+          "level_id": "mvp_cabinet",
+          "device_id": "exit_trigger",
+          "action": "enter"
+        },
+        "requires": [
+          "era==present",
+          "power_on==true",
+          "真实进入exit"
+        ],
+        "assign": {
+          "exit_reached": true
+        },
+        "otherwise": "wrong_era优先；时代正确但机关前置未满足则prerequisites_unmet；不加空气墙"
+      }
+    ],
+    "derived_state": [
+      {
+        "when": "era==present && power_on==false",
+        "door": "closed",
+        "work_lights": "off",
+        "panel": "standby"
+      },
+      {
+        "when": "era==present && cabinet_unlocked==true",
+        "start_button": "enabled"
+      },
+      {
+        "when": "era==present && power_on==true",
+        "door": "open",
+        "work_lights": "on",
+        "activation_sequence": "箱旁灯→出口灯→开门，时序长度待调"
+      },
+      {
+        "when": "era==past",
+        "plaque": "legible",
+        "start_button": "absent_and_not_interactable",
+        "door_and_lights": "source_unspecified_do_not_copy_present_power_state"
+      }
+    ],
+    "ui": "输入UI拥有其提交/取消；不得把UI自身一起禁用。关闭、切时代、reset、离场都要释放或恢复正确输入模式。"
+  },
+  "verification": {
+    "status": "static_asset_checks_passed_runtime_pending",
+    "asset_import": "Blender actual roundtrip plus isolated Godot4.7.2 GLTFDocument static import PASS",
+    "godot_runtime": "not_run",
+    "team_main_project": "not_run",
+    "native_collision_generation": "not_run",
+    "save_reload_gameplay": "not_run",
+    "packaged_build": "not_run",
+    "evidence": [
+      "qa/roundtrip_blender.json",
+      "qa/structure_past.json",
+      "qa/structure_present.json",
+      "qa/provenance_verification.json",
+      "qa/godot_static_import.json",
+      "preview/L03_CABINET_past_axo.png",
+      "preview/L03_CABINET_present_axo.png",
+      "preview/L03_CABINET_past_interface.png",
+      "preview/L03_CABINET_present_interface.png"
+    ],
+    "schema_validation": "passed"
+  }
+}

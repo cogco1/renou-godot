@@ -1,0 +1,270 @@
+{
+  "engine": "4.7.2-stable (official)",
+  "entry": "res://scenes/integration_lab.tscn",
+  "exported_build": "not_run",
+  "failed": 0,
+  "human_manual_play": "not_run",
+  "passed": 43,
+  "results": [
+    {
+      "detail": "Candidate main scene loaded; 1.8 m capsule grounded",
+      "passed": true,
+      "test_id": "startup_floor",
+      "tier": "engine_physics"
+    },
+    {
+      "detail": "Public snapshot mutation cannot write authority",
+      "passed": true,
+      "test_id": "snapshot_isolation",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Duplicate IDs refused before registration",
+      "passed": true,
+      "test_id": "duplicate_device",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "No player-forged completion",
+      "passed": true,
+      "test_id": "output_only",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Unknown stable ID refused",
+      "passed": true,
+      "test_id": "unknown_device",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "present valve unavailable even when out of range",
+      "passed": true,
+      "test_id": "era_before_range",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Ground/capsule queries accept safe platform",
+      "passed": true,
+      "test_id": "safe_switch",
+      "tier": "engine_physics"
+    },
+    {
+      "detail": "Spawn > 2.5 m from device",
+      "passed": true,
+      "test_id": "range_enforced",
+      "tier": "engine_physics"
+    },
+    {
+      "detail": "Real in-range past close changes flag",
+      "passed": true,
+      "test_id": "valve_close",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Second accepted-world-operation attempt in same physics frame refused",
+      "passed": true,
+      "test_id": "same_frame_debounce",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Later repeated close never toggles open",
+      "passed": true,
+      "test_id": "idempotent_close",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "present rebuild removes steam and closes SIDE isolation leaf",
+      "passed": true,
+      "test_id": "valve_persists",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Restores complete era/flags snapshot plus actual checkpoint position",
+      "passed": true,
+      "test_id": "checkpoint_snapshot",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Bridge center: no target ground; no teleport or flag change",
+      "passed": true,
+      "test_id": "no_target_ground",
+      "tier": "engine_physics"
+    },
+    {
+      "detail": "Airborne player cannot switch",
+      "passed": true,
+      "test_id": "airborne_rejected",
+      "tier": "engine_physics"
+    },
+    {
+      "detail": "Switching active scene retains other level runtime state",
+      "passed": true,
+      "test_id": "level_state_retention",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Restart resets flag, era, checkpoint and derived hazard",
+      "passed": true,
+      "test_id": "restart_clears",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Present and true device range required",
+      "passed": true,
+      "test_id": "open_ui",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Movement and era switch blocked while UI owns input",
+      "passed": true,
+      "test_id": "ui_blocks_world",
+      "tier": "engine_physics"
+    },
+    {
+      "detail": "Empty input not accepted; world control restored",
+      "passed": true,
+      "test_id": "empty_code",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Wrong code retry has no soft lock",
+      "passed": true,
+      "test_id": "wrong_code",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Explicit fixture code unlocks without artificial clue_seen prerequisite",
+      "passed": true,
+      "test_id": "known_code_without_clue",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Wrong later attempt does not relock",
+      "passed": true,
+      "test_id": "wrong_after_unlock",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "No checkpoint: initial state+spawn; resets UI lock",
+      "passed": true,
+      "test_id": "reset_cancels_ui",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "No start before unlock",
+      "passed": true,
+      "test_id": "button_prerequisite",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Standing on safe past ground, target-era obstacle occupies full player capsule",
+      "passed": true,
+      "test_id": "capsule_wall_rejected",
+      "tier": "engine_physics"
+    },
+    {
+      "detail": "test_mode=false plus final_code=null cannot accept fixture code",
+      "passed": true,
+      "test_id": "production_code_missing",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Actual exit range cannot bypass unsolved cabinet; no direct completion",
+      "passed": true,
+      "test_id": "unsolved_exit",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Past present-only exit reports era before prerequisites",
+      "passed": true,
+      "test_id": "exit_wrong_era_priority",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "UI blocks world interaction before range/prerequisites",
+      "passed": true,
+      "test_id": "ui_blocks_interact",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Real Escape event cancels focused LineEdit via _input",
+      "passed": true,
+      "test_id": "escape_ui_focus",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "W/Q/W through continuous past bridge, real far trigger, present exit; start to finish",
+      "passed": true,
+      "test_id": "bridge_route_1",
+      "tier": "engine_player_route"
+    },
+    {
+      "detail": "Remaining in exit does not repeat completion",
+      "passed": true,
+      "test_id": "bridge_completion_once_1",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "completed allows movement and safe switch",
+      "passed": true,
+      "test_id": "completed_free_1",
+      "tier": "engine_player_route"
+    },
+    {
+      "detail": "W/Q/W through continuous past bridge, real far trigger, present exit; start to finish",
+      "passed": true,
+      "test_id": "bridge_route_2",
+      "tier": "engine_player_route"
+    },
+    {
+      "detail": "Remaining in exit does not repeat completion",
+      "passed": true,
+      "test_id": "bridge_completion_once_2",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "completed allows movement and safe switch",
+      "passed": true,
+      "test_id": "completed_free_2",
+      "tier": "engine_player_route"
+    },
+    {
+      "detail": "Present gap cannot be jumped with this player; actual fall restores checkpoint",
+      "passed": true,
+      "test_id": "present_gap_fall",
+      "tier": "engine_player_route"
+    },
+    {
+      "detail": "Walking unsolved present steam triggers the shared checkpoint reset; hazard/state rebuilt",
+      "passed": true,
+      "test_id": "steam_failure_recovery",
+      "tier": "engine_player_route"
+    },
+    {
+      "detail": "Spawn/Q/W/E/Q/W: past valve, present physical route, real exit trigger",
+      "passed": true,
+      "test_id": "valve_route_1",
+      "tier": "engine_player_route"
+    },
+    {
+      "detail": "Spawn/Q/W/E/Q/W: past valve, present physical route, real exit trigger",
+      "passed": true,
+      "test_id": "valve_route_2",
+      "tier": "engine_player_route"
+    },
+    {
+      "detail": "Spawn to clue, real UI submit signal, button and open-door collision route",
+      "passed": true,
+      "test_id": "cabinet_route",
+      "tier": "engine_player_route"
+    },
+    {
+      "detail": "Present flag projects into both door body+mesh transform and working lights",
+      "passed": true,
+      "test_id": "cabinet_lights_collision",
+      "tier": "engine_physics"
+    }
+  ],
+  "scope": "primitive independent candidate",
+  "source_asset_import": "not_run"
+}

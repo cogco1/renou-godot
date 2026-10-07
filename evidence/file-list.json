@@ -1,0 +1,190 @@
+[
+  {
+    "file": ".gitignore",
+    "bytes": 26
+  },
+  {
+    "file": "contracts/mvp_bridge.json",
+    "bytes": 1542
+  },
+  {
+    "file": "contracts/mvp_cabinet.json",
+    "bytes": 2160
+  },
+  {
+    "file": "contracts/mvp_valve.json",
+    "bytes": 2074
+  },
+  {
+    "file": "core/player.gd",
+    "bytes": 1413
+  },
+  {
+    "file": "core/player.gd.uid",
+    "bytes": 19
+  },
+  {
+    "file": "core/state_service.gd",
+    "bytes": 7741
+  },
+  {
+    "file": "core/state_service.gd.uid",
+    "bytes": 20
+  },
+  {
+    "file": "docs/API.md",
+    "bytes": 5347
+  },
+  {
+    "file": "docs/ASSET_HANDOFF.md",
+    "bytes": 1939
+  },
+  {
+    "file": "docs/TEST_COVERAGE.md",
+    "bytes": 1724
+  },
+  {
+    "file": "evidence/delivery-status.json",
+    "bytes": 721
+  },
+  {
+    "file": "evidence/import-first.log",
+    "bytes": 1757
+  },
+  {
+    "file": "evidence/project-inventory.json",
+    "bytes": 3511
+  },
+  {
+    "file": "evidence/release-cold_full_tests.log",
+    "bytes": 3532
+  },
+  {
+    "file": "evidence/release-cold_import.log",
+    "bytes": 1485
+  },
+  {
+    "file": "evidence/release-second_start.log",
+    "bytes": 75
+  },
+  {
+    "file": "evidence/release-validation.json",
+    "bytes": 2225
+  },
+  {
+    "file": "evidence/runtime-final.log",
+    "bytes": 3532
+  },
+  {
+    "file": "evidence/runtime-first.log",
+    "bytes": 3070
+  },
+  {
+    "file": "evidence/runtime-results.json",
+    "bytes": 7980
+  },
+  {
+    "file": "evidence/schema-validation.json",
+    "bytes": 1099
+  },
+  {
+    "file": "evidence/source-hashes.json",
+    "bytes": 6369
+  },
+  {
+    "file": "inputs/asset_delivery/L01_BRIDGE/assembly.json",
+    "bytes": 4493
+  },
+  {
+    "file": "inputs/asset_delivery/L01_BRIDGE/manifest.json",
+    "bytes": 7850
+  },
+  {
+    "file": "inputs/asset_delivery/L02_VALVE/assembly.json",
+    "bytes": 8210
+  },
+  {
+    "file": "inputs/asset_delivery/L02_VALVE/manifest.json",
+    "bytes": 13436
+  },
+  {
+    "file": "inputs/asset_delivery/L03_CABINET/assembly.json",
+    "bytes": 17681
+  },
+  {
+    "file": "inputs/asset_delivery/L03_CABINET/manifest.json",
+    "bytes": 13370
+  },
+  {
+    "file": "inputs/asset_delivery/L03_CABINET/test_config.json",
+    "bytes": 314
+  },
+  {
+    "file": "inputs/bridge.manifest.functional.json",
+    "bytes": 1450
+  },
+  {
+    "file": "inputs/cabinet.manifest.functional.json",
+    "bytes": 2069
+  },
+  {
+    "file": "inputs/reference_contracts/公共接口.example.json",
+    "bytes": 2576
+  },
+  {
+    "file": "inputs/reference_contracts/公共接口.schema.json",
+    "bytes": 10701
+  },
+  {
+    "file": "inputs/reference_contracts/公共验收.tests.json",
+    "bytes": 9674
+  },
+  {
+    "file": "inputs/source-copies.json",
+    "bytes": 3378
+  },
+  {
+    "file": "inputs/valve.manifest.functional.json",
+    "bytes": 1948
+  },
+  {
+    "file": "project.godot",
+    "bytes": 557
+  },
+  {
+    "file": "README.md",
+    "bytes": 6928
+  },
+  {
+    "file": "release/mvp_core_v001.zip",
+    "bytes": 67382
+  },
+  {
+    "file": "release/mvp_core_v001.zip.sha256",
+    "bytes": 85
+  },
+  {
+    "file": "Run.ps1",
+    "bytes": 406
+  },
+  {
+    "file": "scenes/integration_lab.gd",
+    "bytes": 17527
+  },
+  {
+    "file": "scenes/integration_lab.gd.uid",
+    "bytes": 20
+  },
+  {
+    "file": "scenes/integration_lab.tscn",
+    "bytes": 181
+  },
+  {
+    "file": "Test.ps1",
+    "bytes": 1295
+  },
+  {
+    "file": "tests/runtime_tests.gd",
+    "bytes": 13767
+  }
+]

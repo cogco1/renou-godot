@@ -1,0 +1,58 @@
+{
+  "archive": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\20261007_Godot_MVP_Integration\\release\\mvp_core_v001.zip",
+  "archive_sha256": "c19c29028735929dbbef4fa64db11e4558c576de5f72ea3015e4b90ef2192bbb",
+  "archive_bytes": 67382,
+  "clean_restore_path": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\20261007_Godot_MVP_Integration\\release\\restore_check_v001",
+  "godot_cache_in_zip": false,
+  "zip_crc": "passed",
+  "checks": [
+    {
+      "check": "cold_import",
+      "passed": true,
+      "exit_code": 0,
+      "command": [
+        "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\tools\\godot-4.7.2\\Godot_v4.7.2-stable_win64_console.exe",
+        "--headless",
+        "--path",
+        "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\20261007_Godot_MVP_Integration\\release\\restore_check_v001",
+        "--editor",
+        "--import",
+        "--quit"
+      ],
+      "log": "release-cold_import.log"
+    },
+    {
+      "check": "cold_full_tests",
+      "passed": true,
+      "exit_code": 0,
+      "command": [
+        "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\tools\\godot-4.7.2\\Godot_v4.7.2-stable_win64_console.exe",
+        "--headless",
+        "--path",
+        "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\20261007_Godot_MVP_Integration\\release\\restore_check_v001",
+        "--fixed-fps",
+        "60",
+        "--",
+        "--test"
+      ],
+      "log": "release-cold_full_tests.log"
+    },
+    {
+      "check": "second_start",
+      "passed": true,
+      "exit_code": 0,
+      "command": [
+        "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\tools\\godot-4.7.2\\Godot_v4.7.2-stable_win64_console.exe",
+        "--headless",
+        "--path",
+        "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\tmp\\20261007_Godot_MVP_Integration\\release\\restore_check_v001",
+        "--quit-after",
+        "120",
+        "--",
+        "--level=2"
+      ],
+      "log": "release-second_start.log"
+    }
+  ],
+  "notes": "Exact ZIP extracted into new empty directory. Cold import, complete tests, separate second start. No source changes after this archive."
+}

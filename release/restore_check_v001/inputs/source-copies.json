@@ -1,0 +1,52 @@
+[
+  {
+    "source": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\00_资产库_待上传\\20261007_三关最小独立资产包\\v001\\L01_BRIDGE\\manifest.json",
+    "local_copy": "inputs\\asset_delivery\\L01_BRIDGE\\manifest.json",
+    "sha256": "4c58c53bdfdd28db92245b6d6e6f72512ff5d395e59603e38179f9e3ab95f595"
+  },
+  {
+    "source": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\00_资产库_待上传\\20261007_三关最小独立资产包\\v001\\L01_BRIDGE\\assembly.json",
+    "local_copy": "inputs\\asset_delivery\\L01_BRIDGE\\assembly.json",
+    "sha256": "e382aa856649496a878ab56e5e7b6bf25b8c9b77ec64dfd2ef7e207a3056657f"
+  },
+  {
+    "source": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\00_资产库_待上传\\20261007_三关最小独立资产包\\v001\\L02_VALVE\\manifest.json",
+    "local_copy": "inputs\\asset_delivery\\L02_VALVE\\manifest.json",
+    "sha256": "044e096f42641eea10c13ac823aeee9b851d1c391fa1dd15bb2068ad5ae6d4fc"
+  },
+  {
+    "source": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\00_资产库_待上传\\20261007_三关最小独立资产包\\v001\\L02_VALVE\\assembly.json",
+    "local_copy": "inputs\\asset_delivery\\L02_VALVE\\assembly.json",
+    "sha256": "474004414df750d8eb7a303ed9df07d2746912d94e1f993d453f92847b1f2fe4"
+  },
+  {
+    "source": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\00_资产库_待上传\\20261007_三关最小独立资产包\\v001\\L03_CABINET\\manifest.json",
+    "local_copy": "inputs\\asset_delivery\\L03_CABINET\\manifest.json",
+    "sha256": "4fd05eedecc9401c17f77b691a49d1515f37a2880a31aabaaaf0536046fad9a2"
+  },
+  {
+    "source": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\00_资产库_待上传\\20261007_三关最小独立资产包\\v001\\L03_CABINET\\assembly.json",
+    "local_copy": "inputs\\asset_delivery\\L03_CABINET\\assembly.json",
+    "sha256": "418dd9e62530e2488202f7ba2fcb22e797f223c2c7ae1c36bc317cd13e393b70"
+  },
+  {
+    "source": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\00_资产库_待上传\\20261007_三关最小独立资产包\\v001\\L03_CABINET\\test_config.json",
+    "local_copy": "inputs\\asset_delivery\\L03_CABINET\\test_config.json",
+    "sha256": "294bafe99fb36f51a3eb422133dc110de958624b97606b9a281e8d4a782f756c"
+  },
+  {
+    "source": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\00_资产库_待上传\\20261007_三关最小独立资产包\\v001\\reference\\contracts\\公共接口.example.json",
+    "local_copy": "inputs\\reference_contracts\\公共接口.example.json",
+    "sha256": "1e8ec5645b58e4baf5611b851afe57d77f992b5433d1cf0c808d3ffc75c1b2d0"
+  },
+  {
+    "source": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\00_资产库_待上传\\20261007_三关最小独立资产包\\v001\\reference\\contracts\\公共接口.schema.json",
+    "local_copy": "inputs\\reference_contracts\\公共接口.schema.json",
+    "sha256": "279a1ac28640913201767843f377173ec9151a9f4e092d4e393d7f0eb619a9e5"
+  },
+  {
+    "source": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\00_资产库_待上传\\20261007_三关最小独立资产包\\v001\\reference\\contracts\\公共验收.tests.json",
+    "local_copy": "inputs\\reference_contracts\\公共验收.tests.json",
+    "sha256": "6d94c5122abff1e2078115e7d359717c83aa0be30e88bef35def9760c991919d"
+  }
+]

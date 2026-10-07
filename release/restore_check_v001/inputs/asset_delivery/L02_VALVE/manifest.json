@@ -1,0 +1,391 @@
+{
+  "$schema": "公共接口.schema.json",
+  "contract_version": "1.0",
+  "level_id": "mvp_valve",
+  "display_name": "阀门",
+  "initial_state": {
+    "era": "present",
+    "flags": {
+      "valve_closed_past": false,
+      "exit_reached": false
+    },
+    "checkpoint_id": null
+  },
+  "anchors": {
+    "entry": "MARKER_Entrance",
+    "spawn": "MARKER_Entrance",
+    "exit": "MARKER_Exit",
+    "checkpoint": "MARKER_SafeReturn",
+    "safe_return": "MARKER_SafeReturn"
+  },
+  "devices": [
+    {
+      "device_id": "valve",
+      "available_eras": [
+        "past"
+      ],
+      "actions": [
+        "close"
+      ],
+      "pivot_anchor": "MOV_Handwheel_L",
+      "collision_mode": "solid",
+      "notes": "present只能给锈死反馈，不能改变因果；没有reopen/toggle",
+      "config": {
+        "source_rotation_axis": "local_Y",
+        "imported_rotation_axis": "local_negative_Z",
+        "axis_vector_godot": [
+          0,
+          0,
+          -1
+        ],
+        "source_local_pivot_m": [
+          -0.83,
+          -0.66,
+          1.28
+        ],
+        "source_secondary_wheel_node": "MOV_Handwheel_R",
+        "secondary_wheel_binding": "retained_unbound",
+        "primary_proposed_close_rotation_rad": 1.5707963267948966,
+        "interaction_proxy": "AREA_ValveInteraction"
+      }
+    },
+    {
+      "device_id": "isolation_gate",
+      "available_eras": [
+        "present",
+        "past"
+      ],
+      "actions": [
+        "inspect"
+      ],
+      "pivot_anchor": "PIVOT_IsolationGate",
+      "collision_mode": "solid",
+      "notes": "只供检查；门闭合从valve_closed_past派生，inspect不改变任何flags",
+      "config": {
+        "motion": "slide",
+        "translation_axis": [
+          1,
+          0,
+          0
+        ],
+        "travel_m": 2.65,
+        "closed_position_godot_m": [
+          1.1,
+          0,
+          -0.25
+        ],
+        "open_position_godot_m": [
+          3.75,
+          0,
+          -0.25
+        ],
+        "collision_pivot": "PIVOT_IsolationGate_Proxy",
+        "collision_mesh": "COL_IsolationGate",
+        "proposal": true
+      }
+    },
+    {
+      "device_id": "steam_hazard",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "inspect"
+      ],
+      "pivot_anchor": "AREA_SteamCorridor",
+      "collision_mode": "hazard",
+      "notes": "只供检查；外溢范围及碰撞从valve_closed_past派生，inspect不改变任何flags",
+      "config": {
+        "source_region": "AREA_SteamSource",
+        "corridor_region": "AREA_SteamCorridor",
+        "barrier_region": "AREA_SteamBarrier",
+        "source_steam_persists_after_closure": true,
+        "geometry_proxies_only": true
+      }
+    },
+    {
+      "device_id": "exit_trigger",
+      "available_eras": [
+        "present"
+      ],
+      "actions": [
+        "enter"
+      ],
+      "pivot_anchor": "MARKER_Exit",
+      "collision_mode": "trigger",
+      "notes": "present且valve_closed_past才置exit_reached；当前仅交定位Marker，程序需创建并验收触发体。"
+    }
+  ],
+  "completion": {
+    "required_flags": {
+      "valve_closed_past": true,
+      "exit_reached": true
+    }
+  },
+  "reset": {
+    "default_mode": "checkpoint",
+    "restart_era": "present",
+    "checkpoint_policy": "snapshot_era_and_flags"
+  },
+  "city_placement": null,
+  "design_pending": [
+    "所有入口、出生、出口、checkpoint和safe_return位置都是10x6m小测试岛proposal，未映射主城或团队关卡。",
+    "独立Godot4.7.2静态导入已通过；团队实际project.godot尚未选定，主工程导入和运行机制未验收。",
+    "门型为框前X向滑门，净口2.4x2.7m、门叶2.5x0.2x2.75m、行程2.65m均已提供白模；玩家胶囊、夹门和移动碰撞安全仍需引擎验证。",
+    "设备间源蒸汽、通路危险与阻汽只交区域代理；粒子、伤害/阻挡反馈和实际阻汽逻辑由程序接入。",
+    "原双手轮均独立；左手轮作主交互，右手轮保留未绑定，不新增第二个必做步骤。",
+    "源阀站材质两时代共用，本次不重做rust/maintained美术。原压力表指针未从站体再拆出，下降反馈为后续程序/表现工作。",
+    "安全切换规则、checkpoint持久化与exit触发体大小仍需程序在实际玩家控制器中验收。",
+    "阀门关卡S节点、完成后的节点位置及前后场景接口尚未放到城市里。"
+  ],
+  "source_refs": [
+    {
+      "title": "共同剧情PDF第4页",
+      "url": "https://drive.google.com/file/d/1VXqf9PI0evItEHPUgYvAlvREhUwhHVtE/view",
+      "locator": "第4页；镜头06-08",
+      "status": "local_text_and_render_actually_verified",
+      "sha256": "e4032a4eda6474c274fc33005daa01c19e725bcc49a5d0e07c1892d326f3d7eb",
+      "local_file": "source/reused/storyboard.pdf"
+    },
+    {
+      "title": "源阀站真实GLB与接口",
+      "status": "geometry_reimport_verified_and_source_unchanged",
+      "files": [
+        {
+          "path": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\20261006_蒸汽资产重整与关卡样段\\kit\\valve_station.glb",
+          "package_copy": "source\\reused\\valve_station.glb",
+          "sha256": "0ef41db4faadf009edbdfc80ddc28b69ecadf1a5f461f06d3f1daf5cb508812d",
+          "bytes": 942760
+        },
+        {
+          "path": "E:\\PROJECTS\\04_COMPETITIONS_竞赛\\人偶之心\\20261006_蒸汽资产重整与关卡样段\\kit\\module_interfaces.json",
+          "package_copy": "source\\reused\\module_interfaces.json",
+          "sha256": "aea7ba11e3d597685c9e21db23cc518bba86ef46b41d810c1158151f09421b95",
+          "bytes": 8233
+        }
+      ],
+      "details": "provenance.json"
+    }
+  ],
+  "whitebox_assets": {
+    "status": "geometry_delivered_runtime_pending",
+    "count_basis": "4 functional groups reuse 3 original meshes; actual visual file has 20 meshes including frame, room, floor and outlet; collision and area boxes are a separate 13-mesh GLB",
+    "core_mesh_count_proposal": 4,
+    "items": [
+      {
+        "asset_id": "valve_shell",
+        "roles": [
+          "shell"
+        ],
+        "visible_eras": [
+          "present",
+          "past"
+        ],
+        "source_url": "https://drive.google.com/file/d/18nCT3gkIMC3qM41ctzrumTCduCwrJyPL/view",
+        "delivery_status": "delivered_geometry_verified",
+        "actual_export_file": "export/mvp_valve.glb",
+        "pivot_node": "ROOT_ValveStation",
+        "notes": "原站体/材质/UV不变；两时代共用，没有重做年代美术。",
+        "actual_nodes": [
+          "VIS_ValveStationBody"
+        ]
+      },
+      {
+        "asset_id": "valve_wheel",
+        "roles": [
+          "moving",
+          "interact"
+        ],
+        "visible_eras": [
+          "present",
+          "past"
+        ],
+        "source_url": "https://drive.google.com/file/d/18nCT3gkIMC3qM41ctzrumTCduCwrJyPL/view",
+        "delivery_status": "delivered_geometry_verified",
+        "actual_export_file": "export/mvp_valve.glb",
+        "pivot_node": "MOV_Handwheel_L",
+        "notes": "两个原始Y轴轮心已回导核验；现在不能转；过去只close主手轮，右轮未绑定。",
+        "actual_nodes": [
+          "MOV_Handwheel_L",
+          "MOV_Handwheel_R"
+        ]
+      },
+      {
+        "asset_id": "isolation_frame",
+        "roles": [
+          "shell"
+        ],
+        "visible_eras": [
+          "present",
+          "past"
+        ],
+        "source_url": null,
+        "delivery_status": "delivered_geometry_verified",
+        "actual_export_file": "export/mvp_valve.glb",
+        "pivot_node": "GRP_Visual",
+        "notes": "放在侧设备间，不封主通道",
+        "actual_nodes": [
+          "VIS_Frame_L",
+          "VIS_Frame_R",
+          "VIS_Frame_Header",
+          "VIS_GateTrack"
+        ]
+      },
+      {
+        "asset_id": "isolation_leaf",
+        "roles": [
+          "moving"
+        ],
+        "visible_eras": [
+          "present",
+          "past"
+        ],
+        "source_url": null,
+        "delivery_status": "delivered_geometry_verified",
+        "actual_export_file": "export/mvp_valve.glb",
+        "pivot_node": "PIVOT_IsolationGate",
+        "notes": "框前滑门沿X行程2.65m；独立碰撞代理需同步，机制未验收。",
+        "actual_nodes": [
+          "MOV_IsolationGate",
+          "VIS_GateStiffener_L",
+          "VIS_GateStiffener_R",
+          "VIS_GateStiffener_M",
+          "VIS_GateLabel"
+        ]
+      }
+    ],
+    "local_space": {
+      "units": "meter",
+      "paired_era_origin": "shared",
+      "paired_era_scale": "shared_uniform",
+      "paired_era_orientation": "shared",
+      "engine": "Godot",
+      "engine_version": "4.7.2-stable (official)",
+      "project_godot": null,
+      "axis_conversion": "Blender meters Z-up -> glTF/Godot meters Y-up: (x,y,z)->(x,z,-y), exactly once at export; Godot root stays identity"
+    },
+    "required_roles": [
+      "shell",
+      "moving",
+      "collision",
+      "interact",
+      "anchor"
+    ],
+    "non_mesh_requirements": [
+      "侧设备间边界",
+      "主通道安全地面",
+      "门扇实体碰撞",
+      "现在外溢蒸汽hazard/阻挡",
+      "设备间内蒸汽视觉",
+      "压力表参数",
+      "五个公共anchor"
+    ],
+    "actual_visual_mesh_count": 20,
+    "actual_collision_and_area_mesh_count": 13,
+    "actual_triangles_visual": 5320,
+    "actual_triangles_proxies": 156,
+    "files": {
+      "editable": "source/mvp_valve.blend",
+      "visual": "export/mvp_valve.glb",
+      "proxies": "export/mvp_valve_proxies.glb",
+      "isolated_visual_snapshot": "export/mvp_valve_isolated_snapshot.glb",
+      "isolated_proxy_snapshot": "export/mvp_valve_isolated_proxies_snapshot.glb"
+    },
+    "assembly_details": "assembly.json",
+    "object_inventory": "objects.json",
+    "non_mesh_status": {
+      "anchor_nodes": "delivered_proposal",
+      "physical_gate_collider": "box_proxy_delivered_runtime_generation_pending",
+      "steam_and_barrier": "region_proxies_delivered_effects_pending",
+      "gauge_feedback": "not_implemented",
+      "time_manager_anchor": "safe_return_marker_proposal"
+    }
+  },
+  "local_state_rules": {
+    "status": "implementation_spec_not_runtime",
+    "source_of_truth": "initial_state.flags；运行时由共享状态持有，视觉/碰撞从状态派生",
+    "idempotence": "赋值而非切换或累加；输入去抖；首次满足完成条件只发一次 level.completed",
+    "reset_semantics": {
+      "checkpoint": "恢复最近合法检查点的era与本关flags快照；没有快照则回本关初态安全出生点",
+      "restart_level": "清除本关状态并恢复initial_state，不清除其他关卡",
+      "reload": "从保存的权威状态重建全部外观、动件终态和碰撞"
+    },
+    "transitions": [
+      {
+        "event": {
+          "event_type": "interact.request",
+          "level_id": "mvp_valve",
+          "device_id": "valve",
+          "action": "close"
+        },
+        "requires": [
+          "era==past",
+          "有效交互距离和视线"
+        ],
+        "assign": {
+          "valve_closed_past": true
+        },
+        "otherwise": "wrong_era或out_of_range；present反馈锈死"
+      },
+      {
+        "event": {
+          "event_type": "interact.request",
+          "level_id": "mvp_valve",
+          "device_id": "exit_trigger",
+          "action": "enter"
+        },
+        "requires": [
+          "era==present",
+          "valve_closed_past==true",
+          "真实进入exit"
+        ],
+        "assign": {
+          "exit_reached": true
+        },
+        "otherwise": "wrong_era优先；时代正确但机关前置未满足则prerequisites_unmet；不加空气墙"
+      }
+    ],
+    "derived_state": [
+      {
+        "when": "valve_closed_past==false",
+        "door": "open",
+        "present_route": "blocked_by_steam",
+        "past_valve": "operable"
+      },
+      {
+        "when": "valve_closed_past==true",
+        "door": "closed_in_both_eras",
+        "present_route": "safe",
+        "present_steam": "contained_in_side_equipment_room",
+        "gauge": "lowered"
+      },
+      {
+        "when": "era==present",
+        "valve_visual": "rusted",
+        "valve_action": "unavailable"
+      },
+      {
+        "when": "era==past",
+        "valve_visual": "maintained",
+        "sign": "检修隔离：关闭阀门，隔离门闭合。"
+      }
+    ]
+  },
+  "verification": {
+    "status": "static_asset_checks_passed_gameplay_pending",
+    "checked": "Blender回导/轴心/bbox/GLB结构/面序/最终图逐张查看，Godot4.7.2独立GLTFDocument静态导入",
+    "asset_import": "passed_isolated_static_import",
+    "godot_runtime": "not_run",
+    "save_reload": "not_run",
+    "packaged_build": "not_run",
+    "tests_file": null,
+    "evidence": [
+      "qa/roundtrip.json",
+      "qa/godot_static_import.json",
+      "qa/visual_review.json",
+      "qa/final_summary.json",
+      "qa/delivery_hashes.json"
+    ],
+    "schema_validation": "passed"
+  }
+}

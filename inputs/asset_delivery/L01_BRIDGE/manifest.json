@@ -1,0 +1,245 @@
+{
+  "$schema": "公共接口.schema.json",
+  "contract_version": "1.0",
+  "level_id": "mvp_bridge",
+  "display_name": "断桥独立测试岛 v001",
+  "initial_state": {
+    "era": "present",
+    "flags": {
+      "bridge_crossed_past": false,
+      "bridge_returned_present": false,
+      "exit_reached": false
+    },
+    "checkpoint_id": null
+  },
+  "anchors": {
+    "entry": "ANCHOR_ENTRY",
+    "spawn": "ANCHOR_ENTRY",
+    "exit": "ANCHOR_EXIT",
+    "checkpoint": "ANCHOR_SAFE_RETURN_ENTRY",
+    "safe_return": "ANCHOR_SAFE_RETURN_ENTRY"
+  },
+  "devices": [
+    {
+      "device_id": "far_landing",
+      "available_eras": [
+        "past"
+      ],
+      "actions": [
+        "enter"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "trigger",
+      "notes": "只由真实对岸进入触发；不是玩家可远程点击的交互"
+    },
+    {
+      "device_id": "exit_trigger",
+      "available_eras": [
+        "present",
+        "past"
+      ],
+      "actions": [
+        "enter"
+      ],
+      "pivot_anchor": null,
+      "collision_mode": "trigger",
+      "notes": "bridge_crossed_past=true才记录exit_reached；桥摘镜另作观察验收"
+    }
+  ],
+  "completion": {
+    "required_flags": {
+      "bridge_crossed_past": true,
+      "exit_reached": true
+    }
+  },
+  "reset": {
+    "default_mode": "checkpoint",
+    "restart_era": "present",
+    "checkpoint_policy": "snapshot_era_and_flags"
+  },
+  "city_placement": null,
+  "design_pending": [
+    "全部局部锚点为proposal；正式城市落点未定。",
+    "Godot 4.7.2独立静态导入已通过；团队候选工程的玩家/碰撞/切换/机制待验证。",
+    "现在代理断口5.5m，玩家跳跃和胶囊参数仍需实机验证。",
+    "bridge_returned_present仅为叙事观察，不是隐形出口锁。",
+    "复用木板钢梁桥；PDF写钢板，后续美术决定表面换皮，保持尺寸和节点ID。"
+  ],
+  "source_refs": [
+    {
+      "title": "storyboard PDF",
+      "url": "https://drive.google.com/file/d/1VXqf9PI0evItEHPUgYvAlvREhUwhHVtE/view",
+      "locator": "pages 1-3",
+      "status": "text_and_page_3_image_read_this_task"
+    },
+    {
+      "title": "source GLB provenance",
+      "local_file": "qa/sources.json",
+      "status": "actual_file_sha256_and_geometry_verified"
+    }
+  ],
+  "whitebox_assets": {
+    "status": "delivered_static_geometry",
+    "count_basis": "独立核心网格；碰撞、锚点、地面灰盒与特效占位不计入",
+    "core_mesh_count_proposal": 3,
+    "items": [
+      {
+        "asset_id": "bridge_past_intact",
+        "roles": [
+          "shell"
+        ],
+        "visible_eras": [
+          "past"
+        ],
+        "source_url": "https://drive.google.com/file/d/1inSXSgBy1XfKuqm4bHa1w0oNnHY8dTr7/view",
+        "delivery_status": "delivered",
+        "actual_export_file": "export/mvp_bridge_past.glb",
+        "pivot_node": null,
+        "notes": "完整桥面与栏杆；连续可走碰撞另建；现有真实对象见objects清单，新增平台为proposal"
+      },
+      {
+        "asset_id": "bridge_present_broken",
+        "roles": [
+          "shell"
+        ],
+        "visible_eras": [
+          "present"
+        ],
+        "source_url": "https://drive.google.com/file/d/1934y42NVCkoZ-KDHaYKla7ZSvwoOFxv6/view",
+        "delivery_status": "delivered",
+        "actual_export_file": "export/mvp_bridge_present.glb",
+        "pivot_node": null,
+        "notes": "真实断口无完整桥碰撞；现有真实对象见objects清单，新增平台为proposal"
+      },
+      {
+        "asset_id": "bridge_abutment",
+        "roles": [
+          "shell"
+        ],
+        "visible_eras": [
+          "present",
+          "past"
+        ],
+        "source_url": null,
+        "delivery_status": "delivered",
+        "actual_export_file": "export/mvp_bridge_present.glb",
+        "pivot_node": null,
+        "notes": "从真实桥台提取或用灰盒；两端实例化，同一网格；现有真实对象见objects清单，新增平台为proposal"
+      }
+    ],
+    "local_space": {
+      "units": "meter",
+      "paired_era_origin": "shared",
+      "paired_era_scale": "shared_uniform",
+      "paired_era_orientation": "shared",
+      "engine": "Godot",
+      "engine_version": "4.7.2.stable.official.ed1daf0bf (isolated QA)",
+      "project_godot": null,
+      "axis_conversion": "Blender meters Z-up -> glTF/Godot meters Y-up: (x,y,z)->(x,z,-y), exactly once at export"
+    },
+    "required_roles": [
+      "shell",
+      "moving",
+      "collision",
+      "interact",
+      "anchor"
+    ],
+    "non_mesh_requirements": [
+      "past完整桥面碰撞",
+      "present残段碰撞",
+      "两时代共同桥台支撑",
+      "fall恢复trigger",
+      "五个公共anchor",
+      "共享眼镜交互与角色；本关无moving桥体"
+    ],
+    "assembly_file": "assembly.json"
+  },
+  "local_state_rules": {
+    "status": "implementation_spec_not_runtime",
+    "source_of_truth": "initial_state.flags；运行时由共享状态持有，视觉/碰撞从状态派生",
+    "idempotence": "赋值而非切换或累加；输入去抖；首次满足完成条件只发一次 level.completed",
+    "reset_semantics": {
+      "checkpoint": "恢复最近合法检查点的era与本关flags快照；没有快照则回本关初态安全出生点",
+      "restart_level": "清除本关状态并恢复initial_state，不清除其他关卡",
+      "reload": "从保存的权威状态重建全部外观、动件终态和碰撞"
+    },
+    "transitions": [
+      {
+        "event": {
+          "event_type": "interact.request",
+          "level_id": "mvp_bridge",
+          "device_id": "far_landing",
+          "action": "enter"
+        },
+        "requires": [
+          "era==past",
+          "真实角色与对岸区域重叠"
+        ],
+        "assign": {
+          "bridge_crossed_past": true
+        },
+        "otherwise": "wrong_era或out_of_range，flags不变"
+      },
+      {
+        "event": {
+          "event_type": "era.switch.request",
+          "level_id": "mvp_bridge",
+          "target_era": "present"
+        },
+        "requires": [
+          "目标时代落点合法",
+          "bridge_crossed_past==true",
+          "角色在对岸安全区"
+        ],
+        "assign": {
+          "bridge_returned_present": true
+        },
+        "notes": "普通合法切时代仍正常接受；此处只定义附加观察flag，不增加通关锁"
+      },
+      {
+        "event": {
+          "event_type": "interact.request",
+          "level_id": "mvp_bridge",
+          "device_id": "exit_trigger",
+          "action": "enter"
+        },
+        "requires": [
+          "真实角色与exit重叠",
+          "bridge_crossed_past==true"
+        ],
+        "assign": {
+          "exit_reached": true
+        },
+        "otherwise": "prerequisites_unmet"
+      }
+    ],
+    "derived_state": [
+      {
+        "when": "era==present",
+        "visual": "断桥",
+        "collision": "只残段与桥台，断口无桥面"
+      },
+      {
+        "when": "era==past",
+        "visual": "完整桥",
+        "collision": "连续桥面与桥台"
+      },
+      {
+        "when": "任意流程flag变化",
+        "invariant": "不永久修桥；桥几何仍只按era选择"
+      }
+    ]
+  },
+  "verification": {
+    "asset_import": "passed_blender_and_isolated_godot_4_7_2",
+    "godot_runtime": "not_run",
+    "save_reload": "not_run",
+    "packaged_build": "not_run",
+    "schema_validation": "passed",
+    "evidence": [
+      "qa/roundtrip.json",
+      "qa/native_reopen.json",
+      "qa/godot_static_import.json"
+    ]
+  }
+}

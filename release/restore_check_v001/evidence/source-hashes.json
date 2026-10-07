@@ -1,0 +1,202 @@
+[
+  {
+    "file": ".gitignore",
+    "bytes": 26,
+    "sha256": "0c4b56cd17b8deded5c6afefae0dfdcad26d31f1c74371cf711e8fe7aaf5f56b"
+  },
+  {
+    "file": "contracts/mvp_bridge.json",
+    "bytes": 1542,
+    "sha256": "ed2548ce775c28089b8220e93e8bce32fef0ebdcd7cd1d618d98ac193282e03c"
+  },
+  {
+    "file": "contracts/mvp_cabinet.json",
+    "bytes": 2160,
+    "sha256": "b0408e22b5645ea0f1a35431e49d1f5ae1b15bbbd63b54436fdd3bab19409aee"
+  },
+  {
+    "file": "contracts/mvp_valve.json",
+    "bytes": 2074,
+    "sha256": "50ded409695cac28a934885a7aa63c36d385179cb1dc871e3ff9a096ac91667a"
+  },
+  {
+    "file": "core/player.gd",
+    "bytes": 1413,
+    "sha256": "7113ff581535a201bf1badbbc30077bc8288eba84157462175fd231f2f08c0d9"
+  },
+  {
+    "file": "core/player.gd.uid",
+    "bytes": 19,
+    "sha256": "4d41cbf99f4759a748f9ee5dbdfd12b1509e29fa639a6ea9950033aea0fa01c4"
+  },
+  {
+    "file": "core/state_service.gd",
+    "bytes": 7741,
+    "sha256": "eacfcfb0cde71dc8a4e76a42c0dc322e6e59d502e0551919c5323b5aea873a70"
+  },
+  {
+    "file": "core/state_service.gd.uid",
+    "bytes": 20,
+    "sha256": "8d8c7c7fe0e6ca4c789a50964c719c0657d26d964fd92c95e3134cc9c4370232"
+  },
+  {
+    "file": "docs/API.md",
+    "bytes": 5347,
+    "sha256": "7eeabff4d4caeb7cffbf1bf46c92f9f539126c92dceaa8f79923b2ac0112e461"
+  },
+  {
+    "file": "docs/ASSET_HANDOFF.md",
+    "bytes": 1939,
+    "sha256": "46638fa4e94adc0ab3515e1294c608f9faea4bb01fa269e43b017670c0e5fa82"
+  },
+  {
+    "file": "docs/TEST_COVERAGE.md",
+    "bytes": 1724,
+    "sha256": "ab2b454c4cc3a22c83e087fb006c11753a36706abd914495da45c3e5279e2aa2"
+  },
+  {
+    "file": "evidence/delivery-status.json",
+    "bytes": 721,
+    "sha256": "68a3c1a2f7b0888541ff59de9296111f24106b20484bc328945de13479e9bd7b"
+  },
+  {
+    "file": "evidence/import-first.log",
+    "bytes": 1757,
+    "sha256": "51ffdd5a8b1bd7a95df98a018b52206f0a3113f07430c6a7448d3d6c7f77dde0"
+  },
+  {
+    "file": "evidence/project-inventory.json",
+    "bytes": 3511,
+    "sha256": "d47170bc60df371269cd0265a543a8f2d52433a68599a8ac9f8219d95ccf5734"
+  },
+  {
+    "file": "evidence/runtime-final.log",
+    "bytes": 3532,
+    "sha256": "07224107cac8e831a6d45534f023ca6841a8f8151f9a47ec2cfd1483f0840fda"
+  },
+  {
+    "file": "evidence/runtime-first.log",
+    "bytes": 3070,
+    "sha256": "fad60abc0e2c84c90519df47a29e4afd5d15ca9343b0aa235210bac34b00a9b4"
+  },
+  {
+    "file": "evidence/runtime-results.json",
+    "bytes": 7980,
+    "sha256": "86292bee44e53e402978c004af96bddec7b39d3958ad2d8b2faee3ee94968d3d"
+  },
+  {
+    "file": "evidence/schema-validation.json",
+    "bytes": 1099,
+    "sha256": "065a151f1a88faa4ea40e906755ea1d290b4f5b995b98eff9f4c70b7925e7678"
+  },
+  {
+    "file": "inputs/asset_delivery/L01_BRIDGE/assembly.json",
+    "bytes": 4493,
+    "sha256": "e382aa856649496a878ab56e5e7b6bf25b8c9b77ec64dfd2ef7e207a3056657f"
+  },
+  {
+    "file": "inputs/asset_delivery/L01_BRIDGE/manifest.json",
+    "bytes": 7850,
+    "sha256": "4c58c53bdfdd28db92245b6d6e6f72512ff5d395e59603e38179f9e3ab95f595"
+  },
+  {
+    "file": "inputs/asset_delivery/L02_VALVE/assembly.json",
+    "bytes": 8210,
+    "sha256": "474004414df750d8eb7a303ed9df07d2746912d94e1f993d453f92847b1f2fe4"
+  },
+  {
+    "file": "inputs/asset_delivery/L02_VALVE/manifest.json",
+    "bytes": 13436,
+    "sha256": "044e096f42641eea10c13ac823aeee9b851d1c391fa1dd15bb2068ad5ae6d4fc"
+  },
+  {
+    "file": "inputs/asset_delivery/L03_CABINET/assembly.json",
+    "bytes": 17681,
+    "sha256": "418dd9e62530e2488202f7ba2fcb22e797f223c2c7ae1c36bc317cd13e393b70"
+  },
+  {
+    "file": "inputs/asset_delivery/L03_CABINET/manifest.json",
+    "bytes": 13370,
+    "sha256": "4fd05eedecc9401c17f77b691a49d1515f37a2880a31aabaaaf0536046fad9a2"
+  },
+  {
+    "file": "inputs/asset_delivery/L03_CABINET/test_config.json",
+    "bytes": 314,
+    "sha256": "294bafe99fb36f51a3eb422133dc110de958624b97606b9a281e8d4a782f756c"
+  },
+  {
+    "file": "inputs/bridge.manifest.functional.json",
+    "bytes": 1450,
+    "sha256": "c901f3fd46a20ad2a7e6d634430d2df2780a4b411839591a968642a32f0fdda9"
+  },
+  {
+    "file": "inputs/cabinet.manifest.functional.json",
+    "bytes": 2069,
+    "sha256": "02097b11bd1d88dd15af98c9a84c7b11c5df5c97251439704a771dd682781082"
+  },
+  {
+    "file": "inputs/reference_contracts/公共接口.example.json",
+    "bytes": 2576,
+    "sha256": "1e8ec5645b58e4baf5611b851afe57d77f992b5433d1cf0c808d3ffc75c1b2d0"
+  },
+  {
+    "file": "inputs/reference_contracts/公共接口.schema.json",
+    "bytes": 10701,
+    "sha256": "279a1ac28640913201767843f377173ec9151a9f4e092d4e393d7f0eb619a9e5"
+  },
+  {
+    "file": "inputs/reference_contracts/公共验收.tests.json",
+    "bytes": 9674,
+    "sha256": "6d94c5122abff1e2078115e7d359717c83aa0be30e88bef35def9760c991919d"
+  },
+  {
+    "file": "inputs/source-copies.json",
+    "bytes": 3378,
+    "sha256": "9f95aef5b6a76af827b5f581892f69e3981c39a01ab9951f750e32fa03b7a128"
+  },
+  {
+    "file": "inputs/valve.manifest.functional.json",
+    "bytes": 1948,
+    "sha256": "e871c91b9d443988a203faee05183399863a605542252d4b48d5ec1c658ca115"
+  },
+  {
+    "file": "project.godot",
+    "bytes": 557,
+    "sha256": "a4aa14871add12a7e3cfc7d384c23349252feb8dc494f538d719b45a6df6328d"
+  },
+  {
+    "file": "README.md",
+    "bytes": 6928,
+    "sha256": "e213026d3f46d1223246a504080848fd8a1e6be58fe9b4f6d69990fa60e600d6"
+  },
+  {
+    "file": "Run.ps1",
+    "bytes": 406,
+    "sha256": "9b9daae70f1ff1037994a1fffffe67647d01af876b874458bf6e0fde53e4c1a3"
+  },
+  {
+    "file": "scenes/integration_lab.gd",
+    "bytes": 17527,
+    "sha256": "464ebee234f0ed4b859504a71922ad91789335f5e13ebb704d0cb146269bbf3d"
+  },
+  {
+    "file": "scenes/integration_lab.gd.uid",
+    "bytes": 20,
+    "sha256": "50e41a333da2b67146c1d0a5a63c340984e9442428d4e5f7403cc280b66e8216"
+  },
+  {
+    "file": "scenes/integration_lab.tscn",
+    "bytes": 181,
+    "sha256": "3406886a0e3c26c5ef1533ff3c4f9c143d71123ec872f48c62db5fb093ca9064"
+  },
+  {
+    "file": "Test.ps1",
+    "bytes": 1295,
+    "sha256": "136b4f47a8011cfbecdd938336ee3e8a984b1f468403eab2121b605e00b9bdbd"
+  },
+  {
+    "file": "tests/runtime_tests.gd",
+    "bytes": 13767,
+    "sha256": "c3e08fdf6d70259031f13d0b61bebc1916854b90d88c94b754604f845d27a2dc"
+  }
+]
