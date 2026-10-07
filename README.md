@@ -11,6 +11,7 @@
 | **本仓库（Git）** | Godot 工程：脚本（.gd）、场景（.tscn / .tres）、项目配置、测试、实际用到的导出 GLB 和贴图（走 Git LFS） |
 | **Google Drive「项目共享文件 / 游戏GOGOGO」** | 资产库（打好包的模型）、合并场地 .blend、设定、方案、视效样片 |
 
+- **Drive 链接和素材导入规则：见 [docs/DRIVE_LINKS.md](docs/DRIVE_LINKS.md)**（素材版本记在 `assets/manifest.json`，用 `tools/verify_assets.ps1` 核对）。
 - 资产入口：Drive 上的 `资产库/`，每个资产一个文件夹，ZIP 里有 GLB 和 README。
 - 评审入口：Drive 上的 `技术评审_20261007/00_说明.md`。
 - 关卡方案：Drive 上的 `人偶之心_E盘工作区/20261007_红区关卡拆分与合并方案/publish/红区三关合并方案.html`。

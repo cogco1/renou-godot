@@ -1,0 +1,16 @@
+{
+  "schema": "renou-godot-assets/1",
+  "note": "One entry per asset imported from the Google Drive asset library. See docs/DRIVE_LINKS.md.",
+  "assets": [
+    {
+      "id": "EXAMPLE_AssetId",
+      "version": "v001_20261007",
+      "current": true,
+      "drive_folder": "https://drive.google.com/drive/folders/<version-folder-id>",
+      "zip_sha256": "<sha256 of the version ZIP on Drive>",
+      "files": [
+        {"path": "assets/<类别>/EXAMPLE_AssetId/v001_20261007/export/EXAMPLE_AssetId.glb", "sha256": "<sha256>"}
+      ]
+    }
+  ]
+}
