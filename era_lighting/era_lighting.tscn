@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://era_lighting/era_lighting.gd" id="1_lwii8"]
+[ext_resource type="Environment" path="res://era_lighting/env_past_beta.tres" id="2_yy5md"]
+
+[node name="EraLighting" type="Node3D" unique_id=1107125309]
+script = ExtResource("1_lwii8")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=500632937]
+environment = ExtResource("2_yy5md")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=686080992]
+transform = Transform3D(-0.42261833, -0.15737869, 0.8925389, 0, 0.9848077, 0.17364818, -0.90630776, 0.0733869, -0.4161978, 0, 0, 0)
+light_color = Color(1, 0.74, 0.48, 1)
+light_energy = 1.9
+light_angular_distance = 0.5
+shadow_enabled = true
+directional_shadow_blend_splits = true
+directional_shadow_max_distance = 120.0
