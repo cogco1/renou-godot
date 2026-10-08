@@ -172,7 +172,7 @@ func _set_objective_completed(title := "") -> void:
 
 # ---------------------------------------------------------------- 时代
 
-## 时代标签：present = 锈橙、空心镜片；past = 铜绿、实心镜片。animate 时播 480 ms 快门 + 刻度环。
+## 时代标签：present = 暮色石板灰、空心镜片；past = 晨光桃、实心镜片（用户 10-08：过去暖亮、现在灰暗）。animate 时播 480 ms 快门 + 刻度环。
 func set_era(new_era: String, animate := true) -> void:
 	era = "past" if new_era == "past" else "present"
 	var color := Tokens.era_color(era)

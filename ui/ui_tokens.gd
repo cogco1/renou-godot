@@ -22,8 +22,8 @@ const SIGNAL_INK := Color("a8432f")
 const ERROR_TEXT := Color("e58a73")
 const MOSS := Color("8fae5a")
 const MOSS_INK := Color("4f6b35")
-const PAST := Color("5fa391")      # 铜绿：过去（显示别名 β）
-const PRESENT := Color("c4692f")   # 锈橙：现在（显示别名 α）
+const PAST := Color("e6a98a")      # 晨光桃：过去（显示别名 β）。用户 10-08：两个时代分早晚，过去＝早晨暖光
+const PRESENT := Color("7f8a8e")   # 暮色石板灰：现在（显示别名 α）。用户 10-08：现在＝黄昏，更灰、雾更浓
 const GRID := Color("cb5446")
 
 const TEXT := PAPER
