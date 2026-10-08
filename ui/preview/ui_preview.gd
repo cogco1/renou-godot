@@ -175,11 +175,12 @@ func _box(p: Vector3, s: Vector3, c: Color) -> MeshInstance3D:
 
 func _set_world_era(era: String) -> void:
 	var past := era == "past"
-	_env.background_color = Color("9fb8b4") if past else Color("2b2a33")
-	_env.ambient_light_color = Color("d6e6df") if past else Color("b98a6a")
-	_env.fog_light_color = Color("b9cdc8") if past else Color("4a3a36")
-	_sun.light_color = Color("fff3dc") if past else Color("ffb27a")
-	_sun.light_energy = 1.4 if past else 0.8
+	_env.background_color = Color("e9d2bc") if past else Color("6e706d")
+	_env.ambient_light_color = Color("f0dcc4") if past else Color("8f918d")
+	_env.fog_light_color = Color("e6cdb4") if past else Color("7a7c79")
+	_sun.light_color = Color("ffd9a8") if past else Color("c9b8a6")
+	_sun.light_energy = 1.5 if past else 0.55
+	_env.fog_density = 0.012 if past else 0.035
 	for n in _past_props:
 		n.visible = past
 	for n in _present_props:

@@ -28,7 +28,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("3_glyph")
 kind = "switch_fx"
-color = Color(0.7686, 0.4118, 0.1843, 1)
+color = Color(0.498, 0.5412, 0.5569, 1)
 
 [node name="Crosshair" type="Control" parent="Root"]
 unique_name_in_owner = true
@@ -150,7 +150,7 @@ size_flags_vertical = 4
 mouse_filter = 2
 script = ExtResource("3_glyph")
 kind = "glasses_present"
-color = Color(0.7686, 0.4118, 0.1843, 1)
+color = Color(0.498, 0.5412, 0.5569, 1)
 
 [node name="Names" type="VBoxContainer" parent="Root/EraTag/Box/Head"]
 layout_mode = 2
