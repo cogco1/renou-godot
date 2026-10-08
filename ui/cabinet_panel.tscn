@@ -52,7 +52,7 @@ theme_override_constants/separation = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"PaperTag"
-text = "CABINET · 配电小院"
+text = "DISTRIBUTION BOX · 配电箱"
 
 [node name="Title" type="Label" parent="Root/Center/Sheet/Box/Head"]
 unique_name_in_owner = true
@@ -95,13 +95,14 @@ theme_override_constants/separation = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"PaperBody"
-text = "输入 4 位数字"
+text = "输入 4 位密码"
 
 [node name="NoteBody" type="Label" parent="Root/Center/Sheet/Box/Note/Row/Texts"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_type_variation = &"PaperMuted"
-text = "密码在过去的铭牌上"
+text = ""
 
 [node name="Keypad" type="GridContainer" parent="Root/Center/Sheet/Box"]
 unique_name_in_owner = true

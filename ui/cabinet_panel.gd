@@ -9,6 +9,7 @@ signal submitted(code: String)
 signal cancelled
 
 const Glyph := preload("res://ui/widgets/ui_glyph.gd")
+const Text := preload("res://ui/ui_text.gd")
 
 @export_range(1, 8) var code_length := 4:
 	set(value):
@@ -60,7 +61,7 @@ func _input(event: InputEvent) -> void:
 func open(id := "cabinet") -> void:
 	device_id = id
 	clear()
-	set_note("info", "输入 %d 位数字" % code_length, "密码在过去的铭牌上")
+	set_note("info", Text.PANEL_NOTE_TITLE % code_length, Text.PANEL_NOTE_BODY)
 	visible = true
 	line_edit.grab_focus()
 	if line_edit.has_method("edit"):
@@ -125,7 +126,7 @@ func _on_text_changed(new_text: String) -> void:
 
 func _on_text_submitted(text: String) -> void:
 	if text.length() < code_length:
-		set_note("warn", "还差 %d 位" % (code_length - text.length()), "输满 %d 位再确认" % code_length)
+		set_note("warn", Text.PANEL_SHORT, "")
 		line_edit.grab_focus()
 		return
 	submitted.emit(text)

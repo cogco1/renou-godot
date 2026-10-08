@@ -4,6 +4,8 @@ extends Node3D
 ##   打开：Godot 编辑器里运行本场景（F6），按 1–0 切状态，Esc 关密码面板。
 ##   截图：Godot --path . --resolution 1920x1080 res://ui/preview/ui_preview.tscn -- --ui-capture=<输出目录>
 
+const Text := preload("res://ui/ui_text.gd")
+
 const STATES := [
 	"01_explore_present",
 	"02_explore_past_plaque",
@@ -31,7 +33,7 @@ func _ready() -> void:
 	_build_world()
 	panel.handle_escape = true
 	panel.cancelled.connect(func(): panel.close(); hud.set_suppressed("puzzle_ui", false))
-	panel.submitted.connect(func(code): panel.close(); hud.set_suppressed("puzzle_ui", false); hud.show_status("info", "提交了 " + code, "预览不判定对错"))
+	panel.submitted.connect(func(code): panel.close(); hud.set_suppressed("puzzle_ui", false); hud.show_status("info", "已提交 " + code, "预览不判定对错"))
 	var capture_dir := ""
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--ui-capture="):
@@ -54,18 +56,18 @@ func apply_state(state: String) -> void:
 	panel.close()
 	hud.set_suppressed("puzzle_ui", false)
 	hud.reset_transients()
-	hud.notice_label.text = "UI 预览 · 演示状态 " + state
+	hud.notice_label.text = "UI 预览 · " + state
 	match state:
 		"01_explore_present":
 			_set_world_era("present")
 			hud.set_level("mvp_cabinet", {})
 			hud.set_era("present", false)
-			hud.show_interaction("plaque", "read", "过去才能用")
+			hud.show_interaction("plaque", "read", Text.ONLY_IN_ERA["past"])
 		"02_explore_past_plaque":
 			_set_world_era("past")
 			hud.set_level("mvp_cabinet", {"clue_seen": true})
 			hud.set_era("past", false)
-			hud.show_status("info", "铭牌上的密码", "0427")
+			hud.show_flag_note("clue_seen")
 			hud.show_interaction("plaque", "read")
 		"03_era_switching":
 			_set_world_era("past")
@@ -75,7 +77,7 @@ func apply_state(state: String) -> void:
 			_set_world_era("present")
 			hud.set_level("mvp_bridge", {"bridge_crossed_past": true})
 			hud.set_era("present", false)
-			hud.show_era_blocked("此处无法切换", 30.0)
+			hud.show_era_blocked(Text.REASON_NOTE["unsafe_switch"][1], 30.0)
 		"05_cabinet_panel":
 			_set_world_era("present")
 			hud.set_level("mvp_cabinet", {"clue_seen": true})
@@ -88,24 +90,24 @@ func apply_state(state: String) -> void:
 			_set_world_era("present")
 			hud.set_level("mvp_cabinet", {"clue_seen": true, "cabinet_unlocked": true})
 			hud.set_era("present", false)
-			hud.show_status("success", "密码正确", "启动按钮已解锁")
+			hud.show_flag_note("cabinet_unlocked")
 			hud.show_interaction("start_button", "press")
 		"07_wrong_code":
 			_set_world_era("present")
 			hud.set_level("mvp_cabinet", {"clue_seen": true})
 			hud.set_era("present", false)
-			hud.show_status("error", "密码不对", "按 E 重试")
+			hud.show_reason("wrong_code")
 			hud.show_interaction("cabinet", "submit_code")
 		"08_valve_closed":
 			_set_world_era("past")
 			hud.set_level("mvp_valve", {"valve_closed_past": true})
 			hud.set_era("past", false)
-			hud.show_status("success", "阀门已关闭", "隔离门闭合，蒸汽被隔在设备间")
+			hud.show_flag_note("valve_closed_past")
 		"09_completed":
 			_set_world_era("present")
 			hud.set_level("mvp_cabinet", {"clue_seen": true, "cabinet_unlocked": true, "power_on": true, "exit_reached": true})
 			hud.set_era("present", false)
-			hud.show_status("success", "通路已恢复", "可以自由走动，按 T 重来")
+			hud.show_note(Text.COMPLETED_NOTE)
 		"10_residual":
 			residual.show_result(0.000024)
 

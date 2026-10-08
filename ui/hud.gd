@@ -172,7 +172,7 @@ func _set_objective_completed(title := "") -> void:
 
 # ---------------------------------------------------------------- 时代
 
-## 时代标签：present = 锈橙、裸眼；past = 铜绿、戴镜。animate 时播 480 ms 快门 + 刻度环。
+## 时代标签：present = 锈橙、空心镜片；past = 铜绿、实心镜片。animate 时播 480 ms 快门 + 刻度环。
 func set_era(new_era: String, animate := true) -> void:
 	era = "past" if new_era == "past" else "present"
 	var color := Tokens.era_color(era)
@@ -285,6 +285,23 @@ func show_status(kind: String, title: String, body := "", seconds := -1.0) -> vo
 	tween.tween_property(toast, "modulate:a", 0.0, motion(Tokens.T_PANEL))
 	tween.tween_callback(toast.queue_free)
 	status_shown.emit(kind, title)
+
+
+## 按公共程序的 reason 显示提示（open_puzzle_ui 这类不走 feedback 信号的结果用）。表里没有的不提示。
+func show_reason(reason: String) -> void:
+	_on_feedback({"accepted": false, "reason": reason})
+
+
+## 再显示一次某个 flag 的提示（例如重读铭牌）。
+func show_flag_note(flag: String) -> void:
+	if Text.FLAG_NOTE.has(flag):
+		var note: Array = Text.FLAG_NOTE[flag]
+		show_status(note[0], note[1], note[2])
+
+
+## 显示文案表里的一条 [种类, 标题, 说明]。
+func show_note(note: Array) -> void:
+	show_status(note[0], note[1], note[2] if note.size() > 2 else "")
 
 
 func clear_status() -> void:
