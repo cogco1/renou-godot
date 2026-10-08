@@ -13,6 +13,14 @@ extends Resource
 @export var compat_exposure := 1.0
 @export var forward_plus_exposure := 1.0
 
+@export_group("City scale")
+## Profile "city" (EraLighting.profile): the island presets hide everything past ~100 m on purpose; at city scale
+## the fog density is multiplied by this, shadows reach further and Forward+ volumetric fog stays off (performance
+## plan v1 D: separate island / city settings).
+@export var city_fog_density_scale := 0.12
+@export var city_shadow_max_distance := 500.0
+@export var city_volumetric_fog := false
+
 @export_group("Sun")
 ## Where the sun is, degrees clockwise from north (-Z). 65 = east-north-east (morning), 255 = west-south-west (dusk).
 @export_range(0.0, 360.0) var sun_compass_deg := 65.0

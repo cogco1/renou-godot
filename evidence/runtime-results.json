@@ -4,7 +4,7 @@
   "exported_build": "not_run",
   "failed": 0,
   "human_manual_play": "not_run",
-  "passed": 43,
+  "passed": 48,
   "results": [
     {
       "detail": "Candidate main scene loaded; 1.8 m capsule grounded",
@@ -263,6 +263,36 @@
       "passed": true,
       "test_id": "cabinet_lights_collision",
       "tier": "engine_physics"
+    },
+    {
+      "detail": "City profile scales the fog on a copy (0.00400 -> 0.00048); preset untouched",
+      "passed": true,
+      "test_id": "era_city_fog",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "City profile sun shadows reach 500 m",
+      "passed": true,
+      "test_id": "era_city_shadow",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "City profile keeps volumetric fog off",
+      "passed": true,
+      "test_id": "era_city_no_volumetric",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Era switch inside the city profile uses the present preset",
+      "passed": true,
+      "test_id": "era_city_switch",
+      "tier": "engine_semantics"
+    },
+    {
+      "detail": "Back to the island profile: preset environment and shadow distance again",
+      "passed": true,
+      "test_id": "era_island_restored",
+      "tier": "engine_semantics"
     }
   ],
   "scope": "primitive independent candidate",

@@ -14,8 +14,16 @@ const PRESET_FILES := {"past": "era_past_beta.tres", "present": "era_present_alp
 		era = value
 		if is_node_ready():
 			_apply()
+## "island": the test-island presets as delivered (thick fog hides the empty horizon). "city": same light and grading,
+## fog scaled down, longer sun shadows, no volumetric fog - for city views (spawn point, city loader).
+@export_enum("island", "city") var profile: String = "island":
+	set(value):
+		profile = value
+		if is_node_ready():
+			_apply()
 
 var _presets := {}
+var _city_envs := {}
 
 
 func _ready() -> void:
@@ -43,7 +51,19 @@ func _apply() -> void:
 		push_error("EraLighting: preset missing for era " + era)
 		return
 	var forward_plus := RenderingServer.get_current_rendering_method() == "forward_plus"
-	p.environment.volumetric_fog_enabled = forward_plus and p.forward_plus_volumetric_fog
-	p.environment.tonemap_exposure = p.forward_plus_exposure if forward_plus else p.compat_exposure
-	$WorldEnvironment.environment = p.environment
+	var env: Environment = p.environment
+	if profile == "city":
+		if not _city_envs.has(era):
+			var c: Environment = p.environment.duplicate()
+			c.fog_density = p.environment.fog_density * p.city_fog_density_scale
+			c.fog_height_density = p.environment.fog_height_density * p.city_fog_density_scale
+			_city_envs[era] = c
+		env = _city_envs[era]
+		env.volumetric_fog_enabled = forward_plus and p.city_volumetric_fog
+	else:
+		env.volumetric_fog_enabled = forward_plus and p.forward_plus_volumetric_fog
+	env.tonemap_exposure = p.forward_plus_exposure if forward_plus else p.compat_exposure
+	$WorldEnvironment.environment = env
 	p.apply_sun($Sun)
+	if profile == "city":
+		$Sun.directional_shadow_max_distance = p.city_shadow_max_distance

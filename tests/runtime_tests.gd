@@ -186,6 +186,7 @@ func run(target) -> void:
 		var image = get_viewport().get_texture().get_image()
 		var error = image.save_png("res://evidence/standalone_valve.png")
 		check("rendered_capture",error == OK,"Actual non-headless Godot viewport after automated player input","engine_render")
+	await _era_lighting_profiles()
 	var report = {"engine":Engine.get_version_info().string,"entry":"res://scenes/integration_lab.tscn","scope":"primitive independent candidate","human_manual_play":"not_run","exported_build":"not_run","source_asset_import":"not_run","passed":rows.size()-failed,"failed":failed,"results":rows}
 	var output = "res://evidence/runtime-render-results.json" if "--capture" in OS.get_cmdline_user_args() else "res://evidence/runtime-results.json"
 	var file = FileAccess.open(output,FileAccess.WRITE)
@@ -266,3 +267,28 @@ func _physical_routes() -> void:
 	var exited = await walk_to(-15)
 	check("cabinet_route",exited and lab.service.is_complete() and lab.service.snapshot().flags.clue_seen,"Spawn to clue, real UI submit signal, button and open-door collision route","engine_player_route")
 	check("cabinet_lights_collision",lab.door.position.y > 4 and lab.lights[0].light_energy > 0,"Present flag projects into both door body+mesh transform and working lights","engine_physics")
+
+func _era_lighting_profiles() -> void:
+	# era_lighting v002 (视效): the "city" profile works on a copy of the preset environment and restores the island
+	# values when switched back; the preset resources themselves never change
+	var el = load("res://era_lighting/era_lighting.tscn").instantiate()
+	add_child(el)
+	await frames(2)
+	var past: EraPreset = el.preset("past")
+	var island_fog: float = past.environment.fog_density
+	var we: WorldEnvironment = el.get_node("WorldEnvironment")
+	var sun: DirectionalLight3D = el.get_node("Sun")
+	el.profile = "city"
+	await frames(1)
+	check("era_city_fog", we.environment != past.environment and is_equal_approx(we.environment.fog_density, island_fog * past.city_fog_density_scale) and is_equal_approx(past.environment.fog_density, island_fog), "City profile scales the fog on a copy (%.5f -> %.5f); preset untouched" % [island_fog, we.environment.fog_density])
+	check("era_city_shadow", is_equal_approx(sun.directional_shadow_max_distance, past.city_shadow_max_distance), "City profile sun shadows reach %.0f m" % sun.directional_shadow_max_distance)
+	check("era_city_no_volumetric", not we.environment.volumetric_fog_enabled, "City profile keeps volumetric fog off")
+	el.set_era("present")
+	await frames(1)
+	var present: EraPreset = el.preset("present")
+	check("era_city_switch", is_equal_approx(we.environment.fog_density, present.environment.fog_density * present.city_fog_density_scale), "Era switch inside the city profile uses the present preset")
+	el.profile = "island"
+	await frames(1)
+	check("era_island_restored", we.environment == present.environment and is_equal_approx(sun.directional_shadow_max_distance, present.shadow_max_distance), "Back to the island profile: preset environment and shadow distance again")
+	el.queue_free()
+	await frames(1)
