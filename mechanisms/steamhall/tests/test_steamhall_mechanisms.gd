@@ -31,6 +31,7 @@ func wait_game(seconds: float) -> void:
 func _run() -> void:
 	await _test_gate()
 	await _test_platform()
+	await _test_skins()
 	await _test_demo_loads()
 	print("TOTAL pass=%d fail=%d" % [passes, fails])
 	quit(1 if fails > 0 else 0)
@@ -152,6 +153,50 @@ func _test_platform() -> void:
 	# deck and rails collision
 	var deck: AnimatableBody3D = p.get_node("MOV_TransferDeck")
 	check("deck collision layer 1", deck.collision_layer == 1)
+	p.queue_free()
+
+
+func _count_meshes(n: Node) -> int:
+	var k := 1 if n is MeshInstance3D else 0
+	for c in n.get_children():
+		k += _count_meshes(c)
+	return k
+
+
+func _test_skins() -> void:
+	# 建模 C8 / C4 skins: visible meshes only; collision, names, pivots and states unchanged
+	var g: BigSlidingGate = (load("res://mechanisms/steamhall/big_sliding_gate.tscn") as PackedScene).instantiate()
+	g.stack_at_end = true
+	root.add_child(g)
+	await process_frame
+	var leaf0: AnimatableBody3D = g.get_node("PIVOT_IsolationGate/Leaf_0")
+	check("gate skin attached to every leaf + track", g.has_skin() and leaf0.has_node("Skin_present") and leaf0.has_node("Skin_past")
+			and g.get_node("PIVOT_IsolationGate/Leaf_4").has_node("Skin_past") and g.has_node("PIVOT_IsolationGate/TrackSkin_present"))
+	check("gate skin has meshes", _count_meshes(leaf0.get_node("Skin_present")) >= 2, str(_count_meshes(leaf0.get_node("Skin_present"))))
+	var shape := (leaf0.get_child(0) as CollisionShape3D).shape as BoxShape3D
+	check("gate leaf collision unchanged under skin", shape.size.is_equal_approx(Vector3(8, 7, 0.25)), str(shape.size))
+	g.apply_state(false, "past")
+	check("gate past shows past skin only", leaf0.get_node("Skin_past").visible and not leaf0.get_node("Skin_present").visible)
+	g.apply_state(true, "present")
+	check("gate present shows present skin, still closes", leaf0.get_node("Skin_present").visible and g.is_closed()
+			and is_equal_approx(g.leaf_x(4), 0.0))
+	g.queue_free()
+	var p: TransferPlatform = (load("res://mechanisms/steamhall/transfer_platform.tscn") as PackedScene).instantiate()
+	root.add_child(p)
+	await process_frame
+	var deck: AnimatableBody3D = p.get_node("MOV_TransferDeck")
+	var dskin: Node3D = deck.get_node_or_null("Skin_present")
+	check("platform deck skin under the deck body, +0.25 m", dskin != null and is_equal_approx(dskin.position.y, 0.25)
+			and _count_meshes(dskin) >= 3, str(dskin.position if dskin else null))
+	var pins_skinned := 0
+	for pin in p._pins:                  # the second pin gets an auto name (@MOV_LockPin@n), so use the list
+		if pin.has_node("Skin_present") and pin.has_node("Skin_past"):
+			pins_skinned += 1
+	check("platform both lock pins skinned, rails + housings skinned", pins_skinned == 2 and p.has_node("RailsSkin_present")
+			and p.has_node("LockPinHousingsSkin_present"), str(pins_skinned))
+	p.apply_state(true, "past")
+	check("platform past skin + still aligned/locked", deck.get_node("Skin_past").visible and not dskin.visible
+			and is_equal_approx(p.deck_x(), 0.0) and is_equal_approx(p.pins_progress(), 1.0))
 	p.queue_free()
 
 

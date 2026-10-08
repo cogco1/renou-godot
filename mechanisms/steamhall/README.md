@@ -8,7 +8,8 @@
 | `big_sliding_gate.gd` / `.tscn` | `BigSlidingGate`：40 m 伸缩式大推拉隔离门（5 扇 × 8 m，高 7 m，门中门 2.4 × 2.7 只是布景）+ 蒸汽粒子 + `AREA_SteamCorridor` |
 | `transfer_platform.gd` / `.tscn` | `TransferPlatform`：导轨转运平台（3.6 × 6.0 m，行程 13.85 m）+ 三档拉杆 + 锁销 + 继电器柜 + 系统卷帘 + `AREA_FallReset` |
 | `demo/demo_steamhall.tscn` | 能单独跑的演示：约 90 m 检修通道、阀站、大门、吊装井、平台、卷帘 |
-| `tests/test_steamhall_mechanisms.gd` | 无头验收测试，共 38 项 |
+| `tests/test_steamhall_mechanisms.gd` | 无头验收测试，共 46 项（38 项机关 + 8 项换皮） |
+| `skins/` | 建模 C8 门叶、C4 平台的可见网格（GLB，过去、现在各一份）和 Godot 导入时解出来的贴图 |
 
 ## 状态规则（只从 flags + era 推出来）
 
@@ -43,12 +44,24 @@ platform.fell_into_gap.connect(回检查点)
 - **大门**：原点在南端 (−430.7, 1025.0, 9.70)，`rotation_degrees.y = 90`（局部 +X 朝北，+Z 朝东侧通道），`stack_at_end = true`（门叶叠在北端）。
 - **平台**：原点 = 对位后平台中心的顶面 (−426.55, 1006.5, 9.70)，不旋转。
 
+## 换皮（建模 C4 / C8，10-08）
+
+`big_sliding_gate.tscn` 和 `transfer_platform.tscn` 默认挂了建模的皮。脚本里直接 `BigSlidingGate.new()` 不带皮，仍是盒子占位，测试的前 38 项就用这种。
+- 门：`skins/PROP_SteamHallGate40_present.glb`、`_past.glb`。每个 `Leaf_i` 的网格挂到同名门叶的 AnimatableBody3D 下（原点都在门叶中心），`Track` 的网格挂到 `PIVOT_IsolationGate` 下。GLB 根坐标系就是门的本地坐标系。
+- 平台：`skins/PROP_SteamHallTransfer_present.glb`、`_past.glb`。
+  - `MOV_TransferDeck` 的网格挂到平台体下，Y +0.25 m：皮的原点在平台面，体的原点在板中心；
+  - `MOV_LockPin_N`、`_S` 挂到北、南两根锁销下；
+  - `Rails`、`LockPinHousings` 挂到平台根节点下。
+- 只换看得见的网格：碰撞、节点名、轴心、状态和信号都不变。两个时代切换时显示对应那份皮，只给一份时两个时代共用。
+- 栏杆的碰撞照旧，看得见的栏杆仍是脚本画的细杆。
+- 来源：建模补件 C4–C8 v001。团队盘「03_阀门/第2关_主蒸汽廊_建模补件C4-C8_v001」，SHA256SUMS 清单 a5d89b8d…。
+
 ## 运行
 
 ```powershell
 $G = 'D:\PROJECTS\07_SOFTWARE_INSTALLERS_安装包与软件\Godot\Godot_v4.7.2-stable_win64_console.exe'
 & $G --path . res://mechanisms/steamhall/demo/demo_steamhall.tscn                       # 试玩：WASD/鼠标/空格，E 交互，Q 切时代，R 检查点，T 重开
-& $G --headless --path . --script res://mechanisms/steamhall/tests/test_steamhall_mechanisms.gd   # 38 项，退出码 0 = 全过
+& $G --headless --path . --script res://mechanisms/steamhall/tests/test_steamhall_mechanisms.gd   # 46 项，退出码 0 = 全过
 & $G --headless --path . res://mechanisms/steamhall/demo/demo_steamhall.tscn -- --demo-smoke
 & $G --path . --resolution 1280x720 res://mechanisms/steamhall/demo/demo_steamhall.tscn -- --demo-capture=<目录>   # 自动截 8 张验收图
 ```

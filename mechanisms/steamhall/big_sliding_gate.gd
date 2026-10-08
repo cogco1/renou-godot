@@ -27,6 +27,11 @@ signal steam_body_entered(body: Node3D)
 ## true:  open stack sits at local x = span_m and leaves extend towards 0 (city: stack at the north end).
 @export var stack_at_end := false
 @export_flags_3d_physics var player_mask := 8
+## Optional visible skins (建模 C8: skins/PROP_SteamHallGate40_present / _past .glb). The GLB root frame is this
+## node's frame and its Leaf_i nodes sit at the leaf centres, so each Leaf_i's meshes are re-parented under the
+## matching leaf body. Only the box meshes are replaced: collision, node names, pivots and states stay the same.
+@export var skin_present: PackedScene
+@export var skin_past: PackedScene
 
 var hazard_active := false
 var _closed := false
@@ -37,6 +42,8 @@ var _pivot: Node3D
 var _leaves: Array[AnimatableBody3D] = []
 var _leaf_meshes: Array[MeshInstance3D] = []
 var _frame_meshes: Array[MeshInstance3D] = []
+var _inset_meshes: Array[MeshInstance3D] = []
+var _skins := {}                     # era -> Array[Node3D] (one holder per leaf + the track skin)
 var _steam_area: Area3D
 var _steam_fx: CPUParticles3D
 var _mat := {}
@@ -44,7 +51,12 @@ var _mat := {}
 
 func _ready() -> void:
 	_build()
+	_attach_skins()
 	apply_state(false, "present")
+
+
+func has_skin() -> bool:
+	return not _skins.is_empty()
 
 
 func leaf_width() -> float:
@@ -141,6 +153,55 @@ func _apply_era_look() -> void:
 		m.material_override = leaf_mat
 	for m in _frame_meshes:
 		m.material_override = _mat.frame
+	if _skins.is_empty():
+		return
+	var shown_era: String = _era if _skins.has(_era) else _skins.keys()[0]    # one skin only: both eras
+	for e in _skins:
+		for n in _skins[e]:
+			n.visible = (e == shown_era)
+
+
+func _attach_skins() -> void:
+	for e in ["present", "past"]:
+		var ps: PackedScene = skin_present if e == "present" else skin_past
+		if ps == null:
+			continue
+		var inst := ps.instantiate()
+		var holders: Array[Node3D] = []
+		for i in _leaves.size():
+			var src := inst.find_child("Leaf_%d" % i, true, false) as Node3D
+			if src == null:
+				push_warning("BigSlidingGate skin '%s' has no Leaf_%d" % [e, i])
+				continue
+			holders.append(_move_children(src, _leaves[i], "Skin_%s" % e, Transform3D.IDENTITY))
+		var track := inst.find_child("Track", true, false) as Node3D
+		if track:
+			holders.append(_move_children(track, _pivot, "TrackSkin_%s" % e, track.transform))
+		inst.free()
+		_skins[e] = holders
+	if _skins.is_empty():
+		return
+	for m in _leaf_meshes + _frame_meshes + _inset_meshes:
+		m.visible = false
+
+
+func _move_children(src: Node3D, dst: Node3D, holder_name: String, xf: Transform3D) -> Node3D:
+	## Moves src's children under a new holder below dst; their transforms stay relative to src.
+	var holder := Node3D.new()
+	holder.name = holder_name
+	holder.transform = xf
+	dst.add_child(holder)
+	for c in src.get_children():
+		_clear_owner(c)                  # nodes leave the imported scene: drop its owner (no inconsistent-owner warnings)
+		src.remove_child(c)
+		holder.add_child(c)
+	return holder
+
+
+func _clear_owner(n: Node) -> void:
+	n.owner = null
+	for c in n.get_children():
+		_clear_owner(c)
 
 
 func _make_mat(c: Color, rough := 0.7, metal := 0.4) -> StandardMaterial3D:
@@ -194,7 +255,7 @@ func _build() -> void:
 		for yy in [-height_m * 0.25, height_m * 0.25]:
 			_frame_meshes.append(_box_mesh(body, Vector3(w, 0.12, leaf_thickness + 0.04), Vector3(0, yy, 0), _mat.frame))
 		if door_in_door and i == 0:          # the fixed leaf carries the personnel door
-			_box_mesh(body, Vector3(2.4, 2.7, leaf_thickness + 0.02), Vector3(0, -height_m * 0.5 + 1.35, 0), _mat.inset)
+			_inset_meshes.append(_box_mesh(body, Vector3(2.4, 2.7, leaf_thickness + 0.02), Vector3(0, -height_m * 0.5 + 1.35, 0), _mat.inset))
 		_pivot.add_child(body)
 		_leaves.append(body)
 	# static top track over the whole span (one beam per layer, merged)
