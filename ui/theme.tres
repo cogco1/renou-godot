@@ -1,0 +1,626 @@
+[gd_resource type="Theme" format=3]
+
+[ext_resource type="Script" path="res://ui/style/notch_style_box.gd" id="1_notch"]
+
+[sub_resource type="SystemFont" id="SystemFont_sans"]
+font_names = PackedStringArray("Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "Microsoft YaHei", "PingFang SC")
+
+[sub_resource type="SystemFont" id="SystemFont_sans_medium"]
+font_names = PackedStringArray("Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "Microsoft YaHei", "PingFang SC")
+font_weight = 500
+
+[sub_resource type="SystemFont" id="SystemFont_sans_bold"]
+font_names = PackedStringArray("Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "Microsoft YaHei", "PingFang SC")
+font_weight = 700
+
+[sub_resource type="SystemFont" id="SystemFont_serif_600"]
+font_names = PackedStringArray("Noto Serif SC", "Source Han Serif SC", "Source Han Serif CN", "Songti SC", "STSong", "SimSun")
+font_weight = 600
+
+[sub_resource type="SystemFont" id="SystemFont_serif_900"]
+font_names = PackedStringArray("Noto Serif SC", "Source Han Serif SC", "Source Han Serif CN", "Songti SC", "STSong", "SimSun")
+font_weight = 900
+
+[sub_resource type="SystemFont" id="SystemFont_label"]
+font_names = PackedStringArray("Barlow Condensed", "Bahnschrift", "Arial Narrow")
+font_weight = 600
+font_stretch = 75
+fallbacks = Array[Font]([SubResource("SystemFont_sans_medium")])
+
+[sub_resource type="FontVariation" id="FontVariation_label"]
+base_font = SubResource("SystemFont_label")
+spacing_glyph = 2
+
+[sub_resource type="SystemFont" id="SystemFont_mono"]
+font_names = PackedStringArray("Cascadia Mono", "JetBrains Mono", "Consolas", "Liberation Mono")
+fallbacks = Array[Font]([SubResource("SystemFont_sans")])
+
+[sub_resource type="SystemFont" id="SystemFont_mono_bold"]
+font_names = PackedStringArray("Cascadia Mono", "JetBrains Mono", "Consolas", "Liberation Mono")
+font_weight = 700
+fallbacks = Array[Font]([SubResource("SystemFont_sans_bold")])
+
+[sub_resource type="StyleBox" id="StyleBox_iron"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0784, 0.0863, 0.0824, 0.78)
+border_color = Color(0.9373, 0.9020, 0.8118, 0.22)
+border_width = 1
+notch = 6
+content_margin_left = 20.0
+content_margin_top = 16.0
+content_margin_right = 20.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBox" id="StyleBox_paper"]
+script = ExtResource("1_notch")
+bg_color = Color(0.9373, 0.9020, 0.8118, 1)
+border_color = Color(0.7882, 0.7176, 0.5608, 1)
+border_width = 1
+notch = 10
+content_margin_left = 32.0
+content_margin_top = 28.0
+content_margin_right = 32.0
+content_margin_bottom = 28.0
+
+[sub_resource type="StyleBox" id="StyleBox_prompt"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0784, 0.0863, 0.0824, 0.86)
+border_color = Color(0.9373, 0.9020, 0.8118, 0.22)
+border_width = 1
+notch = 6
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBox" id="StyleBox_toast"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0784, 0.0863, 0.0824, 0.92)
+border_color = Color(0.9373, 0.9020, 0.8118, 0.22)
+border_width = 1
+notch = 6
+accent_color = Color(0.8863, 0.6980, 0.3686, 1)
+accent_side = 0
+accent_width = 3
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBox" id="StyleBox_era"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0784, 0.0863, 0.0824, 0.78)
+border_color = Color(0.9373, 0.9020, 0.8118, 0.22)
+border_width = 1
+notch = 6
+accent_color = Color(0.9373, 0.9020, 0.8118, 1)
+accent_side = 3
+accent_width = 3
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBox" id="StyleBox_keycap"]
+script = ExtResource("1_notch")
+bg_color = Color(0.9373, 0.9020, 0.8118, 1)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 2
+content_margin_left = 7.0
+content_margin_top = 1.0
+content_margin_right = 7.0
+content_margin_bottom = 1.0
+
+[sub_resource type="StyleBox" id="StyleBox_keycap_ink"]
+script = ExtResource("1_notch")
+bg_color = Color(0.1137, 0.0941, 0.0706, 1)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 2
+content_margin_left = 7.0
+content_margin_top = 1.0
+content_margin_right = 7.0
+content_margin_bottom = 1.0
+
+[sub_resource type="StyleBox" id="StyleBox_code_display"]
+script = ExtResource("1_notch")
+bg_color = Color(0.1137, 0.0941, 0.0706, 1)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 6
+content_margin_left = 28.0
+content_margin_top = 18.0
+content_margin_right = 28.0
+content_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_code_slot"]
+bg_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width_bottom = 2
+border_color = Color(0.9373, 0.9020, 0.8118, 0.5)
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_code_slot_active"]
+bg_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width_bottom = 2
+border_color = Color(0.8863, 0.6980, 0.3686, 1)
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_note_paper"]
+script = ExtResource("1_notch")
+bg_color = Color(0.9020, 0.8510, 0.7216, 1)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 4
+accent_color = Color(0.1137, 0.0941, 0.0706, 1)
+accent_side = 0
+accent_width = 3
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_none"]
+
+[sub_resource type="StyleBox" id="StyleBox_btn_normal"]
+script = ExtResource("1_notch")
+bg_color = Color(0.9373, 0.9020, 0.8118, 0.05)
+border_color = Color(0.9373, 0.9020, 0.8118, 0.5)
+border_width = 1
+notch = 6
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_btn_hover"]
+script = ExtResource("1_notch")
+bg_color = Color(0.8863, 0.6980, 0.3686, 0.12)
+border_color = Color(0.8863, 0.6980, 0.3686, 1)
+border_width = 1
+notch = 6
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_btn_pressed"]
+script = ExtResource("1_notch")
+bg_color = Color(0.7804, 0.6039, 0.2706, 0.3)
+border_color = Color(0.7804, 0.6039, 0.2706, 1)
+border_width = 1
+notch = 6
+content_margin_left = 18.0
+content_margin_top = 11.0
+content_margin_right = 18.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBox" id="StyleBox_btn_focus"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 6
+inner_frame_color = Color(0.8863, 0.6980, 0.3686, 1)
+marker_color = Color(0.8863, 0.6980, 0.3686, 1)
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_btn_disabled"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_color = Color(0.9373, 0.9020, 0.8118, 0.22)
+border_width = 1
+notch = 6
+hatch_color = Color(0.9373, 0.9020, 0.8118, 0.1)
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_primary_normal"]
+script = ExtResource("1_notch")
+bg_color = Color(0.8863, 0.6980, 0.3686, 1)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 6
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_primary_hover"]
+script = ExtResource("1_notch")
+bg_color = Color(0.9373, 0.7804, 0.4902, 1)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 6
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_primary_pressed"]
+script = ExtResource("1_notch")
+bg_color = Color(0.7804, 0.6039, 0.2706, 1)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 6
+content_margin_left = 18.0
+content_margin_top = 11.0
+content_margin_right = 18.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBox" id="StyleBox_primary_focus"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 6
+inner_frame_color = Color(0.1137, 0.0941, 0.0706, 1)
+marker_color = Color(0.8863, 0.6980, 0.3686, 1)
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_key_normal"]
+script = ExtResource("1_notch")
+bg_color = Color(0.9020, 0.8510, 0.7216, 1)
+border_color = Color(0.7882, 0.7176, 0.5608, 1)
+border_width = 1
+notch = 4
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_key_hover"]
+script = ExtResource("1_notch")
+bg_color = Color(0.8667, 0.8118, 0.6627, 1)
+border_color = Color(0.3333, 0.2902, 0.2314, 1)
+border_width = 1
+notch = 4
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_key_pressed"]
+script = ExtResource("1_notch")
+bg_color = Color(0.8039, 0.7412, 0.5725, 1)
+border_color = Color(0.1137, 0.0941, 0.0706, 1)
+border_width = 1
+notch = 4
+content_margin_left = 12.0
+content_margin_top = 11.0
+content_margin_right = 12.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBox" id="StyleBox_key_focus"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 4
+inner_frame_color = Color(0.5412, 0.3529, 0.0706, 1)
+marker_color = Color(0.5412, 0.3529, 0.0706, 1)
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_key_disabled"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_color = Color(0.7882, 0.7176, 0.5608, 1)
+border_width = 1
+notch = 4
+hatch_color = Color(0.1137, 0.0941, 0.0706, 0.14)
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_keyp_normal"]
+script = ExtResource("1_notch")
+bg_color = Color(0.1137, 0.0941, 0.0706, 1)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 4
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_keyp_hover"]
+script = ExtResource("1_notch")
+bg_color = Color(0.2275, 0.1882, 0.1412, 1)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 4
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_keyp_pressed"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0000, 0.0000, 0.0000, 1)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 4
+content_margin_left = 12.0
+content_margin_top = 11.0
+content_margin_right = 12.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBox" id="StyleBox_keyp_focus"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 4
+inner_frame_color = Color(0.9373, 0.9020, 0.8118, 1)
+marker_color = Color(0.5412, 0.3529, 0.0706, 1)
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_keyq_normal"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 4
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_keyq_hover"]
+script = ExtResource("1_notch")
+bg_color = Color(0.1137, 0.0941, 0.0706, 0.06)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 4
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBox" id="StyleBox_lineedit"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0784, 0.0863, 0.0824, 0.78)
+border_color = Color(0.9373, 0.9020, 0.8118, 0.5)
+border_width = 1
+notch = 6
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBox" id="StyleBox_lineedit_focus"]
+script = ExtResource("1_notch")
+bg_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_color = Color(0.0000, 0.0000, 0.0000, 0)
+border_width = 0
+notch = 6
+inner_frame_color = Color(0.8863, 0.6980, 0.3686, 1)
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[resource]
+default_font = SubResource("SystemFont_sans")
+default_font_size = 18
+Button/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+Button/colors/font_hover_color = Color(0.9373, 0.7804, 0.4902, 1)
+Button/colors/font_pressed_color = Color(0.8863, 0.6980, 0.3686, 1)
+Button/colors/font_focus_color = Color(0.9373, 0.9020, 0.8118, 1)
+Button/colors/font_hover_pressed_color = Color(0.8863, 0.6980, 0.3686, 1)
+Button/colors/font_disabled_color = Color(0.9373, 0.9020, 0.8118, 0.64)
+Button/font_sizes/font_size = 18
+Button/fonts/font = SubResource("SystemFont_sans_bold")
+Button/styles/normal = SubResource("StyleBox_btn_normal")
+Button/styles/hover = SubResource("StyleBox_btn_hover")
+Button/styles/pressed = SubResource("StyleBox_btn_pressed")
+Button/styles/focus = SubResource("StyleBox_btn_focus")
+Button/styles/disabled = SubResource("StyleBox_btn_disabled")
+Label/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+LineEdit/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+LineEdit/colors/caret_color = Color(0.8863, 0.6980, 0.3686, 1)
+LineEdit/colors/font_placeholder_color = Color(0.9373, 0.9020, 0.8118, 0.64)
+LineEdit/styles/normal = SubResource("StyleBox_lineedit")
+LineEdit/styles/focus = SubResource("StyleBox_lineedit_focus")
+Panel/styles/panel = SubResource("StyleBox_iron")
+PanelContainer/styles/panel = SubResource("StyleBox_iron")
+HSeparator/colors/separator = Color(0.9373, 0.9020, 0.8118, 0.22)
+PlatePaper/base_type = &"PanelContainer"
+PlatePaper/styles/panel = SubResource("StyleBox_paper")
+PromptPlate/base_type = &"PanelContainer"
+PromptPlate/styles/panel = SubResource("StyleBox_prompt")
+ToastPlate/base_type = &"PanelContainer"
+ToastPlate/styles/panel = SubResource("StyleBox_toast")
+EraPlate/base_type = &"PanelContainer"
+EraPlate/styles/panel = SubResource("StyleBox_era")
+KeyCap/base_type = &"PanelContainer"
+KeyCap/styles/panel = SubResource("StyleBox_keycap")
+KeyCapInk/base_type = &"PanelContainer"
+KeyCapInk/styles/panel = SubResource("StyleBox_keycap_ink")
+CodeDisplay/base_type = &"PanelContainer"
+CodeDisplay/styles/panel = SubResource("StyleBox_code_display")
+CodeSlot/base_type = &"PanelContainer"
+CodeSlot/styles/panel = SubResource("StyleBoxFlat_code_slot")
+CodeSlotActive/base_type = &"PanelContainer"
+CodeSlotActive/styles/panel = SubResource("StyleBoxFlat_code_slot_active")
+NotePaper/base_type = &"PanelContainer"
+NotePaper/styles/panel = SubResource("StyleBox_note_paper")
+BarePanel/base_type = &"PanelContainer"
+BarePanel/styles/panel = SubResource("StyleBoxEmpty_none")
+TagLabel/base_type = &"Label"
+TagLabel/colors/font_color = Color(0.9373, 0.9020, 0.8118, 0.64)
+TagLabel/font_sizes/font_size = 14
+TagLabel/fonts/font = SubResource("FontVariation_label")
+KeyCapLabel/base_type = &"Label"
+KeyCapLabel/colors/font_color = Color(0.1137, 0.0941, 0.0706, 1)
+KeyCapLabel/font_sizes/font_size = 15
+KeyCapLabel/fonts/font = SubResource("SystemFont_mono_bold")
+KeyCapInkLabel/base_type = &"Label"
+KeyCapInkLabel/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+KeyCapInkLabel/font_sizes/font_size = 15
+KeyCapInkLabel/fonts/font = SubResource("SystemFont_mono_bold")
+ObjectiveTitle/base_type = &"Label"
+ObjectiveTitle/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+ObjectiveTitle/font_sizes/font_size = 30
+ObjectiveTitle/fonts/font = SubResource("SystemFont_serif_600")
+PanelTitle/base_type = &"Label"
+PanelTitle/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+PanelTitle/font_sizes/font_size = 40
+PanelTitle/fonts/font = SubResource("SystemFont_serif_900")
+EraName/base_type = &"Label"
+EraName/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+EraName/font_sizes/font_size = 34
+EraName/fonts/font = SubResource("SystemFont_serif_900")
+PromptLabel/base_type = &"Label"
+PromptLabel/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+PromptLabel/font_sizes/font_size = 20
+PromptLabel/fonts/font = SubResource("SystemFont_sans_medium")
+PromptTarget/base_type = &"Label"
+PromptTarget/colors/font_color = Color(0.8863, 0.6980, 0.3686, 1)
+PromptTarget/font_sizes/font_size = 20
+PromptTarget/fonts/font = SubResource("SystemFont_sans_bold")
+StepLabel/base_type = &"Label"
+StepLabel/colors/font_color = Color(0.9373, 0.9020, 0.8118, 0.8)
+StepLabel/font_sizes/font_size = 18
+StepLabel/fonts/font = SubResource("SystemFont_sans")
+CounterLabel/base_type = &"Label"
+CounterLabel/colors/font_color = Color(0.8863, 0.6980, 0.3686, 1)
+CounterLabel/font_sizes/font_size = 18
+CounterLabel/fonts/font = SubResource("SystemFont_mono_bold")
+MutedLabel/base_type = &"Label"
+MutedLabel/colors/font_color = Color(0.9373, 0.9020, 0.8118, 0.64)
+MutedLabel/font_sizes/font_size = 16
+MutedLabel/fonts/font = SubResource("SystemFont_sans")
+HintLabel/base_type = &"Label"
+HintLabel/colors/font_color = Color(0.9373, 0.9020, 0.8118, 0.8)
+HintLabel/font_sizes/font_size = 15
+HintLabel/fonts/font = SubResource("SystemFont_sans_medium")
+ToastTitle/base_type = &"Label"
+ToastTitle/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+ToastTitle/font_sizes/font_size = 20
+ToastTitle/fonts/font = SubResource("SystemFont_sans_bold")
+ToastBody/base_type = &"Label"
+ToastBody/colors/font_color = Color(0.9373, 0.9020, 0.8118, 0.8)
+ToastBody/font_sizes/font_size = 16
+ToastBody/fonts/font = SubResource("SystemFont_sans")
+DialogueName/base_type = &"Label"
+DialogueName/colors/font_color = Color(0.1137, 0.0941, 0.0706, 1)
+DialogueName/font_sizes/font_size = 20
+DialogueName/fonts/font = SubResource("SystemFont_serif_600")
+DialogueText/base_type = &"Label"
+DialogueText/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+DialogueText/font_sizes/font_size = 24
+DialogueText/fonts/font = SubResource("SystemFont_sans_medium")
+DebugLabel/base_type = &"Label"
+DebugLabel/colors/font_color = Color(0.9373, 0.9020, 0.8118, 0.64)
+DebugLabel/font_sizes/font_size = 13
+DebugLabel/fonts/font = SubResource("SystemFont_mono")
+PaperTitle/base_type = &"Label"
+PaperTitle/colors/font_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperTitle/font_sizes/font_size = 40
+PaperTitle/fonts/font = SubResource("SystemFont_serif_900")
+PaperTag/base_type = &"Label"
+PaperTag/colors/font_color = Color(0.3333, 0.2902, 0.2314, 1)
+PaperTag/font_sizes/font_size = 14
+PaperTag/fonts/font = SubResource("FontVariation_label")
+PaperBody/base_type = &"Label"
+PaperBody/colors/font_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperBody/font_sizes/font_size = 18
+PaperBody/fonts/font = SubResource("SystemFont_sans_medium")
+PaperMuted/base_type = &"Label"
+PaperMuted/colors/font_color = Color(0.3333, 0.2902, 0.2314, 1)
+PaperMuted/font_sizes/font_size = 15
+PaperMuted/fonts/font = SubResource("SystemFont_sans")
+CodeDigit/base_type = &"Label"
+CodeDigit/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+CodeDigit/font_sizes/font_size = 46
+CodeDigit/fonts/font = SubResource("SystemFont_mono_bold")
+CodeDigitEmpty/base_type = &"Label"
+CodeDigitEmpty/colors/font_color = Color(0.9373, 0.9020, 0.8118, 0.64)
+CodeDigitEmpty/font_sizes/font_size = 46
+CodeDigitEmpty/fonts/font = SubResource("SystemFont_mono_bold")
+ResidualDigits/base_type = &"Label"
+ResidualDigits/colors/font_color = Color(0.1137, 0.0941, 0.0706, 1)
+ResidualDigits/font_sizes/font_size = 120
+ResidualDigits/fonts/font = SubResource("SystemFont_mono_bold")
+ResidualCaption/base_type = &"Label"
+ResidualCaption/colors/font_color = Color(0.3333, 0.2902, 0.2314, 1)
+ResidualCaption/font_sizes/font_size = 18
+ResidualCaption/fonts/font = SubResource("FontVariation_label")
+PrimaryButton/base_type = &"Button"
+PrimaryButton/colors/font_color = Color(0.1137, 0.0941, 0.0706, 1)
+PrimaryButton/colors/font_hover_color = Color(0.1137, 0.0941, 0.0706, 1)
+PrimaryButton/colors/font_pressed_color = Color(0.1137, 0.0941, 0.0706, 1)
+PrimaryButton/colors/font_focus_color = Color(0.1137, 0.0941, 0.0706, 1)
+PrimaryButton/colors/font_hover_pressed_color = Color(0.1137, 0.0941, 0.0706, 1)
+PrimaryButton/colors/font_disabled_color = Color(0.9373, 0.9020, 0.8118, 0.64)
+PrimaryButton/font_sizes/font_size = 18
+PrimaryButton/fonts/font = SubResource("SystemFont_sans_bold")
+PrimaryButton/styles/normal = SubResource("StyleBox_primary_normal")
+PrimaryButton/styles/hover = SubResource("StyleBox_primary_hover")
+PrimaryButton/styles/pressed = SubResource("StyleBox_primary_pressed")
+PrimaryButton/styles/focus = SubResource("StyleBox_primary_focus")
+PrimaryButton/styles/disabled = SubResource("StyleBox_btn_disabled")
+PaperKey/base_type = &"Button"
+PaperKey/colors/font_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperKey/colors/font_hover_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperKey/colors/font_pressed_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperKey/colors/font_focus_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperKey/colors/font_hover_pressed_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperKey/colors/font_disabled_color = Color(0.3333, 0.2902, 0.2314, 1)
+PaperKey/font_sizes/font_size = 24
+PaperKey/fonts/font = SubResource("SystemFont_sans_bold")
+PaperKey/styles/normal = SubResource("StyleBox_key_normal")
+PaperKey/styles/hover = SubResource("StyleBox_key_hover")
+PaperKey/styles/pressed = SubResource("StyleBox_key_pressed")
+PaperKey/styles/focus = SubResource("StyleBox_key_focus")
+PaperKey/styles/disabled = SubResource("StyleBox_key_disabled")
+PaperKeyPrimary/base_type = &"Button"
+PaperKeyPrimary/colors/font_color = Color(0.9373, 0.9020, 0.8118, 1)
+PaperKeyPrimary/colors/font_hover_color = Color(0.9373, 0.9020, 0.8118, 1)
+PaperKeyPrimary/colors/font_pressed_color = Color(0.9373, 0.9020, 0.8118, 1)
+PaperKeyPrimary/colors/font_focus_color = Color(0.9373, 0.9020, 0.8118, 1)
+PaperKeyPrimary/colors/font_hover_pressed_color = Color(0.9373, 0.9020, 0.8118, 1)
+PaperKeyPrimary/colors/font_disabled_color = Color(0.3333, 0.2902, 0.2314, 1)
+PaperKeyPrimary/font_sizes/font_size = 20
+PaperKeyPrimary/fonts/font = SubResource("SystemFont_sans_bold")
+PaperKeyPrimary/styles/normal = SubResource("StyleBox_keyp_normal")
+PaperKeyPrimary/styles/hover = SubResource("StyleBox_keyp_hover")
+PaperKeyPrimary/styles/pressed = SubResource("StyleBox_keyp_pressed")
+PaperKeyPrimary/styles/focus = SubResource("StyleBox_keyp_focus")
+PaperKeyPrimary/styles/disabled = SubResource("StyleBox_key_disabled")
+PaperKeyQuiet/base_type = &"Button"
+PaperKeyQuiet/colors/font_color = Color(0.3333, 0.2902, 0.2314, 1)
+PaperKeyQuiet/colors/font_hover_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperKeyQuiet/colors/font_pressed_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperKeyQuiet/colors/font_focus_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperKeyQuiet/colors/font_hover_pressed_color = Color(0.1137, 0.0941, 0.0706, 1)
+PaperKeyQuiet/colors/font_disabled_color = Color(0.5608, 0.4902, 0.3529, 1)
+PaperKeyQuiet/font_sizes/font_size = 17
+PaperKeyQuiet/fonts/font = SubResource("SystemFont_sans_bold")
+PaperKeyQuiet/styles/normal = SubResource("StyleBox_keyq_normal")
+PaperKeyQuiet/styles/hover = SubResource("StyleBox_keyq_hover")
+PaperKeyQuiet/styles/pressed = SubResource("StyleBox_keyq_hover")
+PaperKeyQuiet/styles/focus = SubResource("StyleBox_key_focus")
+PaperKeyQuiet/styles/disabled = SubResource("StyleBox_keyq_normal")

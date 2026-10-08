@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/preview/ui_preview.gd" id="1_preview"]
+[ext_resource type="PackedScene" path="res://ui/hud.tscn" id="2_hud"]
+[ext_resource type="PackedScene" path="res://ui/cabinet_panel.tscn" id="3_panel"]
+[ext_resource type="PackedScene" path="res://ui/residual_screen.tscn" id="4_residual"]
+
+[node name="UiPreview" type="Node3D"]
+script = ExtResource("1_preview")
+
+[node name="HUD" parent="." instance=ExtResource("2_hud")]
+
+[node name="CabinetPanel" parent="." instance=ExtResource("3_panel")]
+
+[node name="ResidualScreen" parent="." instance=ExtResource("4_residual")]
