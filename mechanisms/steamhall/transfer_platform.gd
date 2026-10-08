@@ -59,6 +59,8 @@ func _ready() -> void:
 # ------------------------------------------------------------------ public API
 func apply_state(platform_locked_past: bool, era_name: String) -> void:
 	_kill_tweens()
+	if not platform_locked_past:
+		shutter_down = false        # level restart clears the "already dropped" memory with the flag
 	locked = platform_locked_past
 	era = era_name
 	_set_deck(0.0 if locked else -travel_m)
@@ -71,11 +73,12 @@ func apply_state(platform_locked_past: bool, era_name: String) -> void:
 
 
 func lever_request(era_name: String) -> Dictionary:
-	if locked:
-		return {"accepted": false, "reason": "already_locked"}
+	## Era first (present lever is always rusted solid), then the one-way lock - same order as core.
 	if era_name != "past":
 		_jiggle_lever()
 		return {"accepted": false, "reason": "seized"}
+	if locked:
+		return {"accepted": false, "reason": "already_locked"}
 	return {"accepted": true, "reason": null}
 
 
@@ -147,7 +150,7 @@ func _on_deck_sensor(_body: Node3D) -> void:
 
 
 func reset_shutter_memory() -> void:
-	## Level restart (T): the drop may play again next time.
+	## Normally not needed: apply_state(false, ...) already clears the memory on a level restart.
 	shutter_down = false
 
 

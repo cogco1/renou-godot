@@ -23,7 +23,9 @@ func check(name: String, ok: bool, detail := "") -> void:
 
 
 func wait_game(seconds: float) -> void:
-	await create_timer(seconds).timeout      # SceneTreeTimer honours Engine.time_scale
+	# Physics-process timer: ticks in step with the TWEEN_PROCESS_PHYSICS transients, so a busy
+	# machine (capped physics steps per frame) can't let the timer run ahead of the tweens.
+	await create_timer(seconds, true, true).timeout
 
 
 func _run() -> void:
@@ -120,6 +122,18 @@ func _test_platform() -> void:
 	check("past: shutter hidden, no collision", not sh.visible and sh.collision_layer == 0)
 	p.apply_state(true, "present")
 	check("present again: shutter down at once", p.shutter_blocking())
+	r = p.lever_request("present")
+	check("lever present + locked -> seized (era checked first)", not r.accepted and r.reason == "seized", str(r))
+	# level restart: flag back to false clears the shutter memory; relock + step plays the drop again
+	p.apply_state(false, "present")
+	p.apply_state(false, "past")
+	p.play_lock_sequence()
+	await wait_game(6.5)
+	p.apply_state(true, "present")
+	check("after restart: shutter armed again, not down", not p.shutter_blocking())
+	p.notify_player_on_deck()
+	await wait_game(3.5)
+	check("after restart: shutter drop plays again", p.shutter_blocking() and events.count("shutter") == 2, str(events))
 	# cancel mid-sequence jumps to terminal
 	p.reset_shutter_memory()
 	p.apply_state(false, "past")
