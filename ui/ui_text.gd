@@ -28,6 +28,7 @@ const DEVICE_NAME := {
 	"isolation_gate": "隔离门",
 	"exit_trigger": "出口",
 	"far_landing": "对岸",
+	"relay_lever": "拉杆",          # 第 2 关继电器柜的三档拉杆（10-08 加）
 }
 
 ## 交互提示里的动词（按 E 之后发生的事）
@@ -38,6 +39,7 @@ const ACTION_VERB := {
 	"press": "按下",
 	"inspect": "调查",
 	"enter": "进入",
+	"pull": "扳动",
 }
 
 ## 任务追踪：标题＝关卡名；每一步对应一个 flag，flag 变 true 即完成。
@@ -53,6 +55,7 @@ const OBJECTIVES := {
 		"title": "检修通道",
 		"steps": [
 			["在过去关闭蒸汽阀门", "valve_closed_past"],
+			["锁定转运平台", "platform_locked_past"],
 			["穿过检修通道", "exit_reached"],
 		],
 	},
@@ -71,6 +74,7 @@ const OBJECTIVES := {
 const FLAG_NOTE := {
 	"bridge_crossed_past": ["success", "已抵达对岸", ""],
 	"valve_closed_past": ["success", "蒸汽阀门已关闭", "隔离门已闭合"],
+	"platform_locked_past": ["success", "转运平台已锁定", ""],
 	"clue_seen": ["info", "获得线索", "配电箱密码：0427"],
 	"cabinet_unlocked": ["success", "密码正确", "启动按钮已解锁"],
 	"power_on": ["success", "电源已接通", "出口已开启"],
@@ -92,6 +96,9 @@ const REASON_NOTE := {
 	"prerequisites_unmet": ["blocked", "条件未满足", ""],
 	"wrong_code": ["error", "密码错误", ""],
 	"config_missing": ["error", "密码未配置", "检查关卡配置"],
+	# 第 2 关机关（主蒸汽廊组件的原因码，10-08 加）：现在时代拉杆、阀门锈住；已锁上再扳给一句确认，免得像没反应
+	"seized": ["blocked", "已锈死", ""],
+	"already_locked": ["info", "已锁定", ""],
 }
 
 ## 物件只在某个时代可用、玩家在另一个时代时，提示里写的条件（按物件可用的时代取）

@@ -41,7 +41,7 @@ panel.cancelled.connect(func(): service.cancel_puzzle_ui())
 ```
 
 - **交互提示**：每帧算出最近的可交互物件后调 `hud.show_interaction(device_id, action, blocked_reason)`，没有物件时 `hud.hide_interaction()`。`blocked_reason` 为空表示能用；物件只在另一个时代可用时传 `Text.ONLY_IN_ERA[可用时代]`（“过去才能用”）。内容不变时重复调用不会闪。
-- **自动显示的**（`bind_service` 之后不用再管）：时代标签和 480 ms 切换效果；目标和步数（按 flags）；flag 第一次变 true 时的提示（阀门已关闭、密码正确……）；被拒绝的请求（`wrong_code`、`wrong_era`、`unsafe_switch`……，`input_blocked` 不提示）；通关；`input_mode == "puzzle_ui"` 时收起探索 HUD。
+- **自动显示的**（`bind_service` 之后不用再管）：时代标签和 480 ms 切换效果；目标和步数（按 flags）；flag 第一次变 true 时的提示（阀门已关闭、密码正确……）；被拒绝的请求（`wrong_code`、`wrong_era`、`unsafe_switch`、第 2 关拉杆的 `seized`（已锈死）和 `already_locked`（已锁定）……，`input_blocked` 不提示）；通关；`input_mode == "puzzle_ui"` 时收起探索 HUD。
 - **其他方法**：`show_status(kind, title, body)`（kind = success / error / warn / info / blocked / busy）、`set_suppressed(reason, on)`（对话、过场时收起 HUD）、`reset_transients()`、`notice_label`（左下一行小字）、`set_debug_text()` + `debug_visible`。
 - **残差率**：`$ResidualScreen.play(0.000021, 0.000024)`，播完发 `finished`。全屏盖住 HUD。
 - **图层**：HUD 10、密码面板 20、残差率 30。
