@@ -48,6 +48,11 @@ func _test_gate() -> void:
 		stacked = stacked and is_equal_approx(g.leaf_x(i), 0.0)
 	check("gate present open: all leaves stacked", stacked)
 	check("gate present open: hazard active", g.hazard_active and g.get_node("AREA_SteamCorridor").monitoring)
+	var acs: CollisionShape3D = g.get_node("AREA_SteamCorridor").get_child(0)
+	var half: Vector3 = (acs.shape as BoxShape3D).size * 0.5
+	check("gate steam area spans pier face -> far wall (local z 0..depth)",
+			is_equal_approx(acs.position.z - half.z, 0.0) and is_equal_approx(acs.position.z + half.z, g.steam_depth_m),
+			str(acs.position.z - half.z) + ".." + str(acs.position.z + half.z))
 	# 2 closed: leaves tile 40 m
 	g.apply_state(true, "present")
 	check("gate closed: last leaf at 32 m", is_equal_approx(g.leaf_x(4), 32.0), str(g.leaf_x(4)))

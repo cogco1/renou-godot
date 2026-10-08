@@ -8,7 +8,7 @@
 | `big_sliding_gate.gd` / `.tscn` | `BigSlidingGate`：40 m 伸缩式大推拉隔离门（5 扇 × 8 m，高 7 m，门中门 2.4 × 2.7 只是布景）+ 蒸汽粒子 + `AREA_SteamCorridor` |
 | `transfer_platform.gd` / `.tscn` | `TransferPlatform`：导轨转运平台（3.6 × 6.0 m，行程 13.85 m）+ 三档拉杆 + 锁销 + 继电器柜 + 系统卷帘 + `AREA_FallReset` |
 | `demo/demo_steamhall.tscn` | 能单独跑的演示：约 90 m 检修通道、阀站、大门、吊装井、平台、卷帘 |
-| `tests/test_steamhall_mechanisms.gd` | 无头验收测试，共 37 项 |
+| `tests/test_steamhall_mechanisms.gd` | 无头验收测试，共 38 项 |
 
 ## 状态规则（只从 flags + era 推出来）
 
@@ -48,7 +48,7 @@ platform.fell_into_gap.connect(回检查点)
 ```powershell
 $G = 'D:\PROJECTS\07_SOFTWARE_INSTALLERS_安装包与软件\Godot\Godot_v4.7.2-stable_win64_console.exe'
 & $G --path . res://mechanisms/steamhall/demo/demo_steamhall.tscn                       # 试玩：WASD/鼠标/空格，E 交互，Q 切时代，R 检查点，T 重开
-& $G --headless --path . --script res://mechanisms/steamhall/tests/test_steamhall_mechanisms.gd   # 37 项，退出码 0 = 全过
+& $G --headless --path . --script res://mechanisms/steamhall/tests/test_steamhall_mechanisms.gd   # 38 项，退出码 0 = 全过
 & $G --headless --path . res://mechanisms/steamhall/demo/demo_steamhall.tscn -- --demo-smoke
 & $G --path . --resolution 1280x720 res://mechanisms/steamhall/demo/demo_steamhall.tscn -- --demo-capture=<目录>   # 自动截 8 张验收图
 ```

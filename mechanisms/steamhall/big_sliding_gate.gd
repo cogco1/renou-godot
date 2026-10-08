@@ -204,7 +204,8 @@ func _build() -> void:
 	_pivot.add_child(track)
 	_frame_meshes.append(_box_mesh(track, Vector3(span_m, 0.3, _track_depth() + 0.2),
 			Vector3(span_m * 0.5, height_m + 0.15, _track_depth() * 0.5), _mat.frame))
-	# hazard area on the passage side
+	# hazard area: the whole passage from the pier face (local z 0) - it overlaps the track strip on purpose,
+	# so the open part of the strip south of the stacked leaves is covered too
 	_steam_area = Area3D.new()
 	_steam_area.name = "AREA_SteamCorridor"
 	_steam_area.collision_layer = 0
@@ -213,7 +214,7 @@ func _build() -> void:
 	var area_box := BoxShape3D.new()
 	area_box.size = Vector3(span_m, steam_height_m, steam_depth_m)
 	acs.shape = area_box
-	acs.position = Vector3(span_m * 0.5, steam_height_m * 0.5, _track_depth() + steam_depth_m * 0.5)
+	acs.position = Vector3(span_m * 0.5, steam_height_m * 0.5, steam_depth_m * 0.5)
 	_steam_area.add_child(acs)
 	_steam_area.body_entered.connect(_on_steam_body_entered)
 	add_child(_steam_area)
