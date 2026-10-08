@@ -163,7 +163,7 @@ func _build_bridge() -> void:
 		_box("PastRail",Vector3(x,0.65,-8.5),Vector3(0.1,1.3,11),Color("8b9ca8"),"past")
 	trigger_boxes["far_landing"] = AABB(Vector3(-2.8,-0.2,-22), Vector3(5.6,2.5,7.5))
 	devices["far_landing"] = Vector3(0,1,-16)
-	_sign("按 Q 戴镜：过去的桥面是完整的\n现在断口 7.8 m",Vector3(0,3,-3))
+	_sign("危险 · 桥面断裂",Vector3(0,3,-3))
 
 func _build_valve() -> void:
 	_box("ValveShell", Vector3(-2,1,0), Vector3(0.7,2,0.7), Color("81735a"), "common")
@@ -182,7 +182,7 @@ func _build_valve() -> void:
 	steam = _box("SteamHazard",Vector3(0,1,-8),Vector3(5.8,2,2),Color(0.8,0.85,0.9,0.4),"none")
 	devices["steam_hazard"] = Vector3(0,1,-8)
 	trigger_boxes["steam_hazard"] = AABB(Vector3(-3,-0.2,-9), Vector3(6,2.5,2))
-	_sign("检修隔离：在过去关闭阀门，隔离门闭合",Vector3(0,3,-1))
+	_sign("检修隔离：关闭阀门，隔离门闭合",Vector3(0,3,-1))
 
 func _build_cabinet() -> void:
 	_box("CabinetShell",Vector3(-2,1,0),Vector3(0.7,2,1),Color("687c80"),"common")
@@ -205,7 +205,7 @@ func _build_cabinet() -> void:
 		lamp.light_color = Color("ffe6b5")
 		world.add_child(lamp)
 		lights.append(lamp)
-	_sign("过去：读铭牌上的密码\n现在：输入密码，再按启动按钮",Vector3(0,3,-1))
+	_sign("送电程序：输入密码 → 按下启动按钮",Vector3(0,3,-1))
 
 func _box(n: String, p: Vector3, size: Vector3, color: Color, era: String, parent: Node3D = null) -> MeshInstance3D:
 	if parent == null: parent = world

@@ -167,7 +167,7 @@ text = "现在"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TagLabel"
-text = "α · 裸眼"
+text = "α"
 
 [node name="EraHintRow" type="HBoxContainer" parent="Root/EraTag/Box"]
 unique_name_in_owner = true
@@ -191,7 +191,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"HintLabel"
-text = "戴镜看过去"
+text = "戴上眼镜"
 
 [node name="EraBlockedRow" type="HBoxContainer" parent="Root/EraTag/Box"]
 unique_name_in_owner = true
@@ -213,7 +213,7 @@ color = Color(0.898, 0.5412, 0.451, 1)
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"HintLabel"
-text = "此处无法切换"
+text = "无法切换时代"
 
 [node name="PromptRow" type="HBoxContainer" parent="Root"]
 layout_mode = 1
@@ -321,7 +321,7 @@ text = "R"
 [node name="HintR" type="Label" parent="Root/KeyHints"]
 layout_mode = 2
 theme_type_variation = &"HintLabel"
-text = "回检查点"
+text = "返回检查点"
 
 [node name="Notice" type="Label" parent="Root"]
 unique_name_in_owner = true
