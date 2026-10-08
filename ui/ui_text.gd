@@ -71,6 +71,12 @@ const FLAG_NOTE := {
 
 const COMPLETED_NOTE := ["success", "通路已恢复", "可以自由走动，按 T 重来"]
 
+## 掉下去或碰到蒸汽，由主场景触发检查点恢复时
+const RECOVERED_NOTE := ["warn", "回到检查点", "从上一个检查点重新开始"]
+
+## 换关后左下角的一行说明
+const START_NOTICE := "点击画面开始操作 · Esc 释放鼠标"
+
 ## state_service 拒绝请求时的说法：[种类, 标题, 说明]。不在表里的 reason 不提示。
 const REASON_NOTE := {
 	"unsafe_switch": ["blocked", "此处无法切换", "另一个时代这里没有落脚处"],

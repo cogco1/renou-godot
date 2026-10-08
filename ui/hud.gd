@@ -287,6 +287,23 @@ func show_status(kind: String, title: String, body := "", seconds := -1.0) -> vo
 	status_shown.emit(kind, title)
 
 
+## 按公共程序的 reason 显示提示（open_puzzle_ui 这类不走 feedback 信号的结果用）。表里没有的不提示。
+func show_reason(reason: String) -> void:
+	_on_feedback({"accepted": false, "reason": reason})
+
+
+## 再显示一次某个 flag 的提示（例如重读铭牌）。
+func show_flag_note(flag: String) -> void:
+	if Text.FLAG_NOTE.has(flag):
+		var note: Array = Text.FLAG_NOTE[flag]
+		show_status(note[0], note[1], note[2])
+
+
+## 显示文案表里的一条 [种类, 标题, 说明]。
+func show_note(note: Array) -> void:
+	show_status(note[0], note[1], note[2] if note.size() > 2 else "")
+
+
 func clear_status() -> void:
 	for child in _toasts.get_children():
 		_toasts.remove_child(child)
