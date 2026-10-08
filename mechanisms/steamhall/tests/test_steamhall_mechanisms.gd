@@ -1,0 +1,159 @@
+extends SceneTree
+## Headless acceptance tests for BigSlidingGate and TransferPlatform (behaviour spec v001).
+## Godot_v4.7.2-stable_win64_console.exe --headless --path <repo> --script res://mechanisms/steamhall/tests/test_steamhall_mechanisms.gd
+## Exit code 0 = all pass. Runs at Engine.time_scale = 10 so the 6 s / 5.8 s / 3 s transients finish quickly.
+
+var fails := 0
+var passes := 0
+var events: Array[String] = []
+
+
+func _initialize() -> void:
+	Engine.time_scale = 10.0
+	_run.call_deferred()
+
+
+func check(name: String, ok: bool, detail := "") -> void:
+	if ok:
+		passes += 1
+		print("PASS ", name)
+	else:
+		fails += 1
+		print("FAIL ", name, "  ", detail)
+
+
+func wait_game(seconds: float) -> void:
+	await create_timer(seconds).timeout      # SceneTreeTimer honours Engine.time_scale
+
+
+func _run() -> void:
+	await _test_gate()
+	await _test_platform()
+	await _test_demo_loads()
+	print("TOTAL pass=%d fail=%d" % [passes, fails])
+	quit(1 if fails > 0 else 0)
+
+
+func _test_gate() -> void:
+	var g := BigSlidingGate.new()
+	root.add_child(g)
+	await process_frame
+	g.gate_motion_finished.connect(func(c: bool) -> void: events.append("gate_finished_%s" % c))
+	# 1 present, open: stacked, hazard on
+	g.apply_state(false, "present")
+	var stacked := true
+	for i in g.leaf_count:
+		stacked = stacked and is_equal_approx(g.leaf_x(i), 0.0)
+	check("gate present open: all leaves stacked", stacked)
+	check("gate present open: hazard active", g.hazard_active and g.get_node("AREA_SteamCorridor").monitoring)
+	# 2 closed: leaves tile 40 m
+	g.apply_state(true, "present")
+	check("gate closed: last leaf at 32 m", is_equal_approx(g.leaf_x(4), 32.0), str(g.leaf_x(4)))
+	check("gate closed: hazard off", not g.hazard_active and not g.get_node("AREA_SteamCorridor").monitoring)
+	# past open: no hazard
+	g.apply_state(false, "past")
+	check("gate past open: no hazard", not g.hazard_active)
+	# play_close: 6 s transient reaches closed and signals once
+	g.apply_state(true, "past")
+	g.play_close()
+	check("gate play_close starts from open", g.progress() < 0.05)
+	await wait_game(6.6)
+	check("gate play_close reaches closed", is_equal_approx(g.progress(), 1.0), str(g.progress()))
+	check("gate finished signal", events.count("gate_finished_true") == 1, str(events))
+	# cancel mid-way jumps to terminal (closed)
+	g.play_close()
+	await wait_game(1.0)
+	g.cancel_transients()
+	check("gate cancel_transients -> terminal closed", is_equal_approx(g.progress(), 1.0))
+	# era toggling never reopens
+	for k in 5:
+		g.apply_state(true, "present" if k % 2 == 0 else "past")
+	check("gate 5 era switches stay closed", g.is_closed() and is_equal_approx(g.progress(), 1.0))
+	# leaves carry collision on layer 1 and move with the pivot
+	var leaf: AnimatableBody3D = g.get_node("PIVOT_IsolationGate/Leaf_4")
+	check("gate leaf collision layer 1", leaf.collision_layer == 1)
+	# stack_at_end mirrors the stack
+	var g2 := BigSlidingGate.new()
+	g2.stack_at_end = true
+	root.add_child(g2)
+	await process_frame
+	g2.apply_state(false, "present")
+	check("gate stack_at_end: open stack at span end", is_equal_approx(g2.leaf_x(3), 32.0), str(g2.leaf_x(3)))
+	g2.apply_state(true, "present")
+	check("gate stack_at_end: closed leaf 4 at 0", is_equal_approx(g2.leaf_x(4), 0.0), str(g2.leaf_x(4)))
+	g.queue_free()
+	g2.queue_free()
+
+
+func _test_platform() -> void:
+	var p := TransferPlatform.new()
+	root.add_child(p)
+	await process_frame
+	p.platform_locked.connect(func() -> void: events.append("locked"))
+	p.platform_aligned.connect(func() -> void: events.append("aligned"))
+	p.shutter_dropped.connect(func() -> void: events.append("shutter"))
+	p.apply_state(false, "present")
+	check("platform start parked", is_equal_approx(p.deck_x(), -p.travel_m), str(p.deck_x()))
+	var r := p.lever_request("present")
+	check("lever present seized", not r.accepted and r.reason == "seized", str(r))
+	r = p.lever_request("past")
+	check("lever past accepted", r.accepted, str(r))
+	p.apply_state(false, "past")
+	p.play_lock_sequence()
+	await wait_game(6.5)
+	check("platform aligned after sequence", is_equal_approx(p.deck_x(), 0.0), str(p.deck_x()))
+	check("pins locked after sequence", is_equal_approx(p.pins_progress(), 1.0), str(p.pins_progress()))
+	check("lever at detent 3", p.detent == 3)
+	check("aligned + locked signals once each", events.count("aligned") == 1 and events.count("locked") == 1, str(events))
+	r = p.lever_request("past")
+	check("lever already_locked", not r.accepted and r.reason == "already_locked", str(r))
+	# back to present: aligned and locked, shutter armed but not down until the player steps on the deck
+	p.apply_state(true, "present")
+	check("present after lock: still aligned", is_equal_approx(p.deck_x(), 0.0))
+	check("present after lock: shutter not yet down", not p.shutter_blocking())
+	p.notify_player_on_deck()
+	await wait_game(3.5)
+	check("shutter dropped after first step", p.shutter_blocking() and events.count("shutter") == 1, str(events))
+	# past hides the shutter and its collision; present restores it down immediately
+	p.apply_state(true, "past")
+	var sh: AnimatableBody3D = p.get_node("MOV_Shutter")
+	check("past: shutter hidden, no collision", not sh.visible and sh.collision_layer == 0)
+	p.apply_state(true, "present")
+	check("present again: shutter down at once", p.shutter_blocking())
+	# cancel mid-sequence jumps to terminal
+	p.reset_shutter_memory()
+	p.apply_state(false, "past")
+	p.play_lock_sequence()
+	await wait_game(1.5)
+	p.cancel_transients()
+	check("cancel mid-sequence -> terminal aligned", is_equal_approx(p.deck_x(), 0.0) and is_equal_approx(p.pins_progress(), 1.0))
+	# lever range helper
+	check("lever_in_range near pedestal", p.lever_in_range(p.to_global(p.lever_offset + Vector3(-1.0, 0, 0))))
+	check("lever_in_range far away", not p.lever_in_range(p.to_global(Vector3(0, 0, 0))))
+	# deck and rails collision
+	var deck: AnimatableBody3D = p.get_node("MOV_TransferDeck")
+	check("deck collision layer 1", deck.collision_layer == 1)
+	p.queue_free()
+
+
+func _test_demo_loads() -> void:
+	var scene: PackedScene = load("res://mechanisms/steamhall/demo/demo_steamhall.tscn")
+	check("demo scene loads", scene != null)
+	if scene == null:
+		return
+	var d := scene.instantiate()
+	root.add_child(d)
+	await process_frame
+	await process_frame
+	check("demo has both mechanisms", d.get_node_or_null("BigSlidingGate") != null and d.get_node_or_null("TransferPlatform") != null)
+	# drive the demo's own flags the way an adapter would
+	d.era = "past"
+	d.rebuild()
+	d.player.global_position = d.valve_pos + Vector3(-1.5, 0.1, -0.5)
+	d._interact()
+	check("demo: valve in past closes the gate", d.flags.valve_closed_past and d.gate.is_closed())
+	d.player.global_position = d.platform.to_global(d.platform.lever_offset + Vector3(-0.8, 0.1, 0))
+	d._interact()
+	await wait_game(6.5)
+	check("demo: lever in past locks the platform", d.flags.platform_locked_past and is_equal_approx(d.platform.deck_x(), 0.0))
+	d.queue_free()
