@@ -129,19 +129,28 @@ func _capture_all(dir: String) -> void:
 
 # ---------------------------------------------------------------- 占位 3D 场景
 
+## 视效的两个时代光照预设（res://era_lighting/，由视效／主集成另行加入工程）。有就用它，没有就用下面的简易光照。
+const ERA_LIGHTING := "res://era_lighting/era_lighting.tscn"
+var _era_lighting: Node
+
+
 func _build_world() -> void:
+	if ResourceLoader.exists(ERA_LIGHTING):
+		_era_lighting = load(ERA_LIGHTING).instantiate()
+		add_child(_era_lighting)
 	_env = Environment.new()
 	_env.background_mode = Environment.BG_COLOR
 	_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	_env.ambient_light_energy = 0.7
 	_env.fog_enabled = true
 	_env.fog_density = 0.02
-	var we := WorldEnvironment.new()
-	we.environment = _env
-	add_child(we)
-	_sun = DirectionalLight3D.new()
-	_sun.rotation_degrees = Vector3(-38, -30, 0)
-	add_child(_sun)
+	if _era_lighting == null:
+		var we := WorldEnvironment.new()
+		we.environment = _env
+		add_child(we)
+		_sun = DirectionalLight3D.new()
+		_sun.rotation_degrees = Vector3(-38, -30, 0)
+		add_child(_sun)
 	var cam := Camera3D.new()
 	cam.position = Vector3(0, 1.62, 4.5)
 	cam.rotation_degrees = Vector3(-4, 0, 0)
@@ -175,13 +184,16 @@ func _box(p: Vector3, s: Vector3, c: Color) -> MeshInstance3D:
 
 func _set_world_era(era: String) -> void:
 	var past := era == "past"
+	for n in _past_props:
+		n.visible = past
+	for n in _present_props:
+		n.visible = not past
+	if _era_lighting:
+		_era_lighting.set_era(era)
+		return
 	_env.background_color = Color("e9d2bc") if past else Color("6e706d")
 	_env.ambient_light_color = Color("f0dcc4") if past else Color("8f918d")
 	_env.fog_light_color = Color("e6cdb4") if past else Color("7a7c79")
 	_sun.light_color = Color("ffd9a8") if past else Color("c9b8a6")
 	_sun.light_energy = 1.5 if past else 0.55
 	_env.fog_density = 0.012 if past else 0.035
-	for n in _past_props:
-		n.visible = past
-	for n in _present_props:
-		n.visible = not past
