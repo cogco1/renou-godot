@@ -1,0 +1,10 @@
+﻿role,owner,paths,deliverable,notes
+总负责人,Kaiwen,-,范围、剧情、取舍、视频验收,
+UI,Kaiwen,ui/,交互提示、时代提示、密码面板,按 A「检修图版」规范
+公共程序+主集成,Benson,core/; player/; project.godot; scenes/integration_lab.*; main/; export_presets.cfg,公共玩家与时代切换、合并 PR、三关串联、导出,
+断桥 mvp_bridge,Ocean,levels/mvp_bridge/; assets/关卡/mvp_bridge/,独立测试岛可玩通 + B01 录制,GP01 18 m 小桥仅练手关
+阀门 mvp_valve,Kevin,levels/mvp_valve/; assets/关卡/mvp_valve/,独立测试岛可玩通 + V01 录制,
+配电箱 mvp_cabinet,Panny,levels/mvp_cabinet/; assets/关卡/mvp_cabinet/,独立测试岛可玩通 + P01 录制,正式密码 0427
+录制与剪辑,樊曦（暂定）,工程外 video/,镜头表、原片、剪辑工程、成片,
+音乐与音效,已有人负责（姓名待补）,audio/,配乐与音效,Drive 音乐与音效_团队交付 v003 待验收
+戴镜动作,待定,player/visual/,戴镜动作,暂不阻塞三关
