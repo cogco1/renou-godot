@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EraPreset" format=3]
+
+[ext_resource type="Environment" path="res://era_lighting/env_present_alpha.tres" id="1_lu0ev"]
+[ext_resource type="Script" path="res://era_lighting/era_preset.gd" id="2_f16jr"]
+
+[resource]
+script = ExtResource("2_f16jr")
+era_name = "present"
+environment = ExtResource("1_lu0ev")
+forward_plus_exposure = 1.35
+sun_compass_deg = 255.0
+sun_elevation_deg = 5.0
+sun_color = Color(1, 0.6, 0.36, 1)
+sun_energy = 1.6
+sun_angular_distance = 0.8

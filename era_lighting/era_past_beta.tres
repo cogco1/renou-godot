@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EraPreset" format=3]
+
+[ext_resource type="Environment" path="res://era_lighting/env_past_beta.tres" id="1_xsftm"]
+[ext_resource type="Script" path="res://era_lighting/era_preset.gd" id="2_i5meq"]
+
+[resource]
+script = ExtResource("2_i5meq")
+era_name = "past"
+environment = ExtResource("1_xsftm")
+compat_exposure = 0.95
+forward_plus_exposure = 1.15
+sun_color = Color(1, 0.74, 0.48, 1)
+sun_energy = 1.9
