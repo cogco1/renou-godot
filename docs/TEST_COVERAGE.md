@@ -5,6 +5,7 @@
 | 来源规格 | 实际报告test_id |
 |---|---|
 | C01_past_change_survives_switch | valve_persists、valve_route_1/2、flow_v3_present_gate_closed、flow_v5_present_deck、flow_era_round_trips |
+| （阀门）关门不夹人 | flow_v2_interlock：门关闭过程中从侧面、端头都进不了门叶轨道带 |
 | C02_wrong_era_rejected | era_before_range、exit_wrong_era_priority、valve_seized_present、flow_v1_valve_seized、flow_lever_seized_present、flow_present_locked_seized |
 | C03_repeat_is_idempotent | idempotent_close、same_frame_debounce、flow_v2_idempotent、flow_v4_already_locked |
 | C04_switch_without_safe_ground | airborne_rejected、no_target_ground |

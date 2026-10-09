@@ -256,6 +256,18 @@ func _valve_flow() -> void:
 	r = await action("valve","close")
 	await frames(30)
 	check("flow_v2_valve_closed",r.accepted and flags.call().valve_closed_past and gate.is_closed() and gate.progress() > 0.0 and gate.progress() < 1.0,"V2 past valve accepted; gate closing animation running (progress %.2f after 0.5 s)" % gate.progress())
+	# 联锁栏杆: while the gate is still closing, the player can't step into the leaf track band from the side or the end
+	await place(Vector3(1.5,0.04,-24))
+	var side_reached: bool = await strafe_to_x(2.6, false, 90)
+	var side_x: float = lab.player.position.x
+	await place(Vector3(3.5,0.04,-47))
+	Input.action_press("move_back")
+	await frames(90)
+	Input.action_release("move_back")
+	await frames(3)
+	var end_z: float = lab.player.position.z
+	check("flow_v2_interlock",not side_reached and side_x > 2.2 and side_x < 2.45 and end_z < -44.5 and gate.progress() < 1.0,"Past, gate closing (%.2f): interlock rail stops the player at x %.2f (band starts 2.9), end cap at z %.2f (band ends -44)" % [gate.progress(), side_x, end_z],"engine_physics")
+	await place(Vector3(0,0.04,0.8))
 	r = await action("valve","close")
 	check("flow_v2_idempotent",r.accepted and gate.is_closed(),"Second close accepted, stays closed, no replay from open")
 	# V3 present: gate rebuilt fully closed, no steam

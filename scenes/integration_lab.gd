@@ -220,6 +220,17 @@ func _build_valve() -> void:
 	trigger_boxes["steam_hazard"] = steam_box
 	devices["steam_hazard"] = steam_box.get_center()
 	devices["isolation_gate"] = gate.global_transform * Vector3(gate.span_m * 0.5, 1.4, 0)
+	# 联锁栏杆 (past only, 1.1 m; same as L2_BARRIER in the UE steam hall): keeps the player out of the leaf track band,
+	# so a closing leaf can't push anyone into the slot between two tracks. Rail along the band's outer edge (gate
+	# local z = band + 0.15) plus a cap at each end. Present needs none: open gate = steam, closed gate fills the band.
+	var interlock := Node3D.new()
+	interlock.name = "GateInterlock"
+	interlock.transform = gate.transform
+	moving.add_child(interlock)
+	var rail_z: float = (gate.leaf_count - 1) * gate.track_spacing + gate.leaf_thickness + 0.15
+	_box("L2_BARRIER_GateInterlock", Vector3(gate.span_m * 0.5, 0.55, rail_z), Vector3(gate.span_m + 0.7, 1.1, 0.1), steel, "past", interlock)
+	for x in [-0.3, gate.span_m + 0.3]:
+		_box("L2_BARRIER_GateInterlockEnd", Vector3(x, 0.55, rail_z * 0.5), Vector3(0.1, 1.1, rail_z), steel, "past", interlock)
 	# Transfer section after the valve: platform, three-detent relay lever, lock pins, shutter, fall volume.
 	platform = PlatformScene.instantiate()
 	platform.name = "TransferPlatform"
