@@ -31,6 +31,12 @@ signal fell_into_gap(body: Node3D)
 @export var deck_seconds := 4.0
 @export var shutter_seconds := 3.0
 @export_flags_3d_physics var player_mask := 8
+## Optional visible skins (建模 C4: skins/PROP_SteamHallTransfer_present / _past .glb). The GLB root frame is this
+## node's frame (aligned deck centre top). MOV_TransferDeck's meshes go under the deck body (+deck_size.y / 2,
+## because the body origin is the slab centre), MOV_LockPin_N / _S under the two pins, Rails and LockPinHousings
+## under this node. Only box meshes are hidden: collision, names, pivots and states stay the same.
+@export var skin_present: PackedScene
+@export var skin_past: PackedScene
 
 var locked := false
 var era := "present"
@@ -42,6 +48,8 @@ var _shutter_tween: Tween
 var _deck: AnimatableBody3D
 var _deck_x := 0.0
 var _deck_meshes: Array[MeshInstance3D] = []
+var _skinned_boxes: Array[MeshInstance3D] = []    # box meshes a skin replaces (slab, trim, beacons, pins, rails, housings)
+var _skins := {}                                   # era -> Array[Node3D]
 var _pins: Array[Node3D] = []
 var _lever_pivot: Node3D
 var _lamps: Array[MeshInstance3D] = []
@@ -53,7 +61,12 @@ var _mat := {}
 
 func _ready() -> void:
 	_build()
+	_attach_skins()
 	apply_state(false, "present")
+
+
+func has_skin() -> bool:
+	return not _skins.is_empty()
 
 
 # ------------------------------------------------------------------ public API
@@ -231,6 +244,55 @@ func _apply_era_look() -> void:
 		_lamps[i].material_override = _mat.amber if (past or i == 0) else _mat.lamp_off
 	for l in _signal_lamps:
 		l.material_override = _mat.amber
+	if not _skins.is_empty():
+		var shown_era: String = era if _skins.has(era) else _skins.keys()[0]
+		for e in _skins:
+			for n in _skins[e]:
+				n.visible = (e == shown_era)
+
+
+func _attach_skins() -> void:
+	for e in ["present", "past"]:
+		var ps: PackedScene = skin_present if e == "present" else skin_past
+		if ps == null:
+			continue
+		var inst := ps.instantiate()
+		var holders: Array[Node3D] = []
+		var deck := inst.find_child("MOV_TransferDeck", true, false) as Node3D
+		if deck:
+			holders.append(_move_children(deck, _deck, "Skin_%s" % e, Transform3D(Basis(), Vector3(0, deck_size.y * 0.5, 0))))
+		for k in _pins.size():                     # _pins[0] is north (-Z), _pins[1] south (+Z)
+			var src := inst.find_child("MOV_LockPin_N" if _pins[k].position.z < 0.0 else "MOV_LockPin_S", true, false) as Node3D
+			if src:
+				holders.append(_move_children(src, _pins[k], "Skin_%s" % e, Transform3D.IDENTITY))
+		for nm in ["Rails", "LockPinHousings"]:
+			var src2 := inst.find_child(nm, true, false) as Node3D
+			if src2:
+				holders.append(_move_children(src2, self, "%sSkin_%s" % [nm, e], src2.transform))
+		inst.free()
+		_skins[e] = holders
+	if _skins.is_empty():
+		return
+	for m in _skinned_boxes:
+		m.visible = false
+
+
+func _move_children(src: Node3D, dst: Node3D, holder_name: String, xf: Transform3D) -> Node3D:
+	var holder := Node3D.new()
+	holder.name = holder_name
+	holder.transform = xf
+	dst.add_child(holder)
+	for c in src.get_children():
+		_clear_owner(c)                  # nodes leave the imported scene: drop its owner (no inconsistent-owner warnings)
+		src.remove_child(c)
+		holder.add_child(c)
+	return holder
+
+
+func _clear_owner(n: Node) -> void:
+	n.owner = null
+	for c in n.get_children():
+		_clear_owner(c)
 
 
 func _make_mat(c: Color, rough := 0.7, metal := 0.4, emit := 0.0) -> StandardMaterial3D:
@@ -282,7 +344,7 @@ func _build() -> void:
 	var x0 := -travel_m - hw - 1.0
 	var x1 := x0 + rail_length_m
 	for zz in [-gap_m * 0.5 + 0.2, gap_m * 0.5 - 0.2]:
-		_box(rails, Vector3(x1 - x0, 0.5, 0.4), Vector3((x0 + x1) * 0.5, -deck_size.y - 0.25, zz), _mat.steel)
+		_skinned_boxes.append(_box(rails, Vector3(x1 - x0, 0.5, 0.4), Vector3((x0 + x1) * 0.5, -deck_size.y - 0.25, zz), _mat.steel))
 		var cs := CollisionShape3D.new()
 		var wedge := ConvexPolygonShape3D.new()
 		wedge.points = PackedVector3Array([
@@ -299,13 +361,14 @@ func _build() -> void:
 	add_child(_deck)
 	_box_col(_deck, deck_size, Vector3.ZERO)
 	_deck_meshes.append(_box(_deck, deck_size, Vector3.ZERO, _mat.deck_present))
+	_skinned_boxes.append(_deck_meshes[-1])
 	for sx in [-1.0, 1.0]:
-		_box(_deck, Vector3(0.24, 0.25, deck_size.z), Vector3(sx * hw, -0.2, 0), _mat.trim)
+		_skinned_boxes.append(_box(_deck, Vector3(0.24, 0.25, deck_size.z), Vector3(sx * hw, -0.2, 0), _mat.trim))
 		_box_col(_deck, Vector3(0.08, 1.1, deck_size.z), Vector3(sx * (hw - 0.05), deck_size.y * 0.5 + 0.55, 0))
 		_box(_deck, Vector3(0.06, 0.06, deck_size.z), Vector3(sx * (hw - 0.05), deck_size.y * 0.5 + 1.1, 0), _mat.steel)
 		for sz in [-1.0, 1.0]:
 			_box(_deck, Vector3(0.06, 1.1, 0.06), Vector3(sx * (hw - 0.05), deck_size.y * 0.5 + 0.55, sz * (hl - 0.05)), _mat.steel)
-			_box(_deck, Vector3(0.16, 0.16, 0.16), Vector3(sx * (hw - 0.05), deck_size.y * 0.5 + 1.2, sz * (hl - 0.05)), _mat.amber)
+			_skinned_boxes.append(_box(_deck, Vector3(0.16, 0.16, 0.16), Vector3(sx * (hw - 0.05), deck_size.y * 0.5 + 1.2, sz * (hl - 0.05)), _mat.amber))
 	var sensor := Area3D.new()
 	sensor.name = "DeckSensor"
 	sensor.collision_layer = 0
@@ -322,12 +385,13 @@ func _build() -> void:
 	for zz in [-gap_m * 0.5 - 0.35, gap_m * 0.5 + 0.35]:
 		var house := _box(self, Vector3(0.4, 0.85, 0.5), Vector3(pin_x, 0.425, zz), _mat.steel)
 		house.name = "LockPinHousing"
+		_skinned_boxes.append(house)
 		var pin := Node3D.new()
 		pin.name = "MOV_LockPin"
 		pin.set_meta("x0", pin_x + 0.3)
 		pin.position = Vector3(pin_x + 0.3, 0.7 - deck_size.y * 0.5, zz)
 		add_child(pin)
-		_box(pin, Vector3(0.6, 0.18, 0.18), Vector3(0.3, 0, 0), _mat.trim)
+		_skinned_boxes.append(_box(pin, Vector3(0.6, 0.18, 0.18), Vector3(0.3, 0, 0), _mat.trim))
 		_pins.append(pin)
 	# relay cabinet + lever pedestal + handle pivot (three detents)
 	var cab := StaticBody3D.new()

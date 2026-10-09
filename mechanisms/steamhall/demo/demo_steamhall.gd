@@ -32,14 +32,14 @@ class StubService extends Node:
 func _ready() -> void:
 	_setup_input()
 	_build_world()
-	gate = BigSlidingGate.new()
+	gate = (load("res://mechanisms/steamhall/big_sliding_gate.tscn") as PackedScene).instantiate()   # 建模 C8 skins
 	gate.name = "BigSlidingGate"
 	gate.stack_at_end = true
 	gate.position = Vector3(0.0, 0.0, -18.5)          # south end; local +X -> north (-Z), local +Z -> passage (+X)
 	gate.rotation_degrees.y = 90.0
 	add_child(gate)
 	gate.steam_body_entered.connect(_on_hazard)
-	platform = TransferPlatform.new()
+	platform = (load("res://mechanisms/steamhall/transfer_platform.tscn") as PackedScene).instantiate()   # C4 skins
 	platform.name = "TransferPlatform"
 	platform.position = Vector3(DECK_X, 0.0, 0.0)
 	add_child(platform)

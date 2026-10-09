@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://mechanisms/steamhall/transfer_platform.gd" id="1"]
+[ext_resource type="PackedScene" path="res://mechanisms/steamhall/skins/PROP_SteamHallTransfer_present.glb" id="2"]
+[ext_resource type="PackedScene" path="res://mechanisms/steamhall/skins/PROP_SteamHallTransfer_past.glb" id="3"]
 
 [node name="TransferPlatform" type="Node3D"]
 script = ExtResource("1")
+skin_present = ExtResource("2")
+skin_past = ExtResource("3")

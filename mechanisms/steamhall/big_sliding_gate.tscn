@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://mechanisms/steamhall/big_sliding_gate.gd" id="1"]
+[ext_resource type="PackedScene" path="res://mechanisms/steamhall/skins/PROP_SteamHallGate40_present.glb" id="2"]
+[ext_resource type="PackedScene" path="res://mechanisms/steamhall/skins/PROP_SteamHallGate40_past.glb" id="3"]
 
 [node name="BigSlidingGate" type="Node3D"]
 script = ExtResource("1")
+skin_present = ExtResource("2")
+skin_past = ExtResource("3")
