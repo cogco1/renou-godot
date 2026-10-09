@@ -20,6 +20,7 @@
     "era": "present",
     "flags": {
       "valve_closed_past": false,
+      "platform_locked_past": false,
       "exit_reached": false
     },
     "checkpoint_id": null
@@ -35,6 +36,7 @@
     {
       "device_id": "valve",
       "available_eras": [
+        "present",
         "past"
       ],
       "actions": [
@@ -56,7 +58,7 @@
       "actions": [
         "inspect"
       ],
-      "pivot_anchor": "Moving/IsolationPivot",
+      "pivot_anchor": "Moving/IsolationGate/PIVOT_IsolationGate",
       "collision_mode": "solid"
     },
     {
@@ -69,6 +71,18 @@
       ],
       "pivot_anchor": null,
       "collision_mode": "hazard"
+    },
+    {
+      "device_id": "relay_lever",
+      "available_eras": [
+        "present",
+        "past"
+      ],
+      "actions": [
+        "pull"
+      ],
+      "pivot_anchor": "Moving/TransferPlatform/LeverPedestal/MOV_LeverHandle",
+      "collision_mode": "solid"
     },
     {
       "device_id": "exit_trigger",
@@ -85,6 +99,7 @@
   "completion": {
     "required_flags": {
       "valve_closed_past": true,
+      "platform_locked_past": true,
       "exit_reached": true
     }
   }
