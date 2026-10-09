@@ -4,7 +4,7 @@
     "past_beta": {
       "era": "past",
       "sun": {
-        "compass": 65.0,
+        "compass": 105.0,
         "elevation": 10.0,
         "color": "(1.0, 0.74, 0.48, 1.0)",
         "energy": 1.9,
@@ -66,7 +66,7 @@
     "present_alpha": {
       "era": "present",
       "sun": {
-        "compass": 255.0,
+        "compass": 295.0,
         "elevation": 5.0,
         "color": "(1.0, 0.6, 0.36, 1.0)",
         "energy": 1.6,
