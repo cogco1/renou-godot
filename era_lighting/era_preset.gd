@@ -34,6 +34,17 @@ extends Resource
 ## Sun disc size in degrees; soft shadow edges in Forward+ only.
 @export var sun_angular_distance := 0.5
 
+@export_group("Sky panorama")
+## Optional equirectangular panorama for this era (for example the 3 km background ring that the level team renders with
+## the same sun: present 5 deg, past 10 deg). When set, EraLighting gives the environment a PanoramaSkyMaterial with this
+## image (also used for sky-lit ambient and reflections); the sun stays its own DirectionalLight3D. Empty: the
+## environment's own sky stays as it is.
+@export var sky_panorama: Texture2D
+## Brightness of the panorama (sky, ambient and reflections).
+@export var sky_panorama_energy := 1.0
+## Turns the panorama around the vertical axis, in degrees, to line its painted sun up with sun_compass_deg.
+@export var sky_panorama_rotation_deg := 0.0
+
 
 func sun_rotation_degrees() -> Vector3:
 	# A DirectionalLight3D shines along its -Z: pitch down by the elevation, then yaw so it travels away from the sun.

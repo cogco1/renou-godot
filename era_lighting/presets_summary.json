@@ -61,7 +61,7 @@
         "adjustment_contrast": 1.12,
         "adjustment_saturation": 1.12
       },
-      "sun_rotation_degrees": "(-10.0, 115.0, 0.0)"
+      "sun_rotation_degrees": "(-10.0, 75.0, 0.0)"
     },
     "present_alpha": {
       "era": "present",
@@ -125,7 +125,7 @@
         "adjustment_contrast": 1.1,
         "adjustment_saturation": 0.85
       },
-      "sun_rotation_degrees": "(-5.0, -75.0, 0.0)"
+      "sun_rotation_degrees": "(-5.0, -115.0, 0.0)"
     }
   },
   "missing_properties": []
