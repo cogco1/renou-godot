@@ -1,0 +1,354 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/hud.gd" id="1_hud"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://ui/widgets/ui_glyph.gd" id="3_glyph"]
+[ext_resource type="PackedScene" path="res://ui/interaction_prompt.tscn" id="4_prompt"]
+
+[node name="HUD" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_hud")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+theme = ExtResource("2_theme")
+
+[node name="SwitchFx" type="Control" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_glyph")
+kind = "switch_fx"
+color = Color(0.498, 0.5412, 0.5569, 1)
+
+[node name="Crosshair" type="Control" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -24.0
+offset_right = 24.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_glyph")
+kind = "crosshair"
+color = Color(0.8863, 0.698, 0.3686, 0.85)
+
+[node name="Objective" type="PanelContainer" parent="Root"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 0
+offset_left = 48.0
+offset_top = 40.0
+offset_right = 568.0
+offset_bottom = 172.0
+mouse_filter = 2
+
+[node name="Box" type="VBoxContainer" parent="Root/Objective"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Tag" type="Label" parent="Root/Objective/Box"]
+layout_mode = 2
+theme_type_variation = &"TagLabel"
+text = "CURRENT OBJECTIVE · 当前目标"
+
+[node name="TitleRow" type="HBoxContainer" parent="Root/Objective/Box"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="ObjectiveDone" type="Control" parent="Root/Objective/Box/TitleRow"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("3_glyph")
+kind = "check"
+color = Color(0.5608, 0.6824, 0.3529, 1)
+
+[node name="ObjectiveTitle" type="Label" parent="Root/Objective/Box/TitleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ObjectiveTitle"
+text = "到对岸去"
+
+[node name="Ruler" type="Control" parent="Root/Objective/Box"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_glyph")
+kind = "ruler"
+color = Color(0.9373, 0.902, 0.8118, 0.5)
+
+[node name="StepRow" type="HBoxContainer" parent="Root/Objective/Box"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="Step" type="Label" parent="Root/Objective/Box/StepRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"StepLabel"
+text = "过去：沿完整的桥面走到对岸"
+
+[node name="Counter" type="Label" parent="Root/Objective/Box/StepRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"CounterLabel"
+text = "1 / 2"
+
+[node name="EraTag" type="PanelContainer" parent="Root"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(236, 0)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -284.0
+offset_top = 40.0
+offset_right = -48.0
+offset_bottom = 160.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_type_variation = &"EraPlate"
+
+[node name="Box" type="VBoxContainer" parent="Root/EraTag"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Head" type="HBoxContainer" parent="Root/EraTag/Box"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 14
+
+[node name="EraGlyph" type="Control" parent="Root/EraTag/Box/Head"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 30)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("3_glyph")
+kind = "glasses_present"
+color = Color(0.498, 0.5412, 0.5569, 1)
+
+[node name="Names" type="VBoxContainer" parent="Root/EraTag/Box/Head"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="EraName" type="Label" parent="Root/EraTag/Box/Head/Names"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"EraName"
+text = "现在"
+
+[node name="EraAlias" type="Label" parent="Root/EraTag/Box/Head/Names"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TagLabel"
+text = "α"
+
+[node name="EraHintRow" type="HBoxContainer" parent="Root/EraTag/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="KeyCap" type="PanelContainer" parent="Root/EraTag/Box/EraHintRow"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"KeyCap"
+
+[node name="KeyLabel" type="Label" parent="Root/EraTag/Box/EraHintRow/KeyCap"]
+layout_mode = 2
+theme_type_variation = &"KeyCapLabel"
+text = "Q"
+horizontal_alignment = 1
+
+[node name="EraHint" type="Label" parent="Root/EraTag/Box/EraHintRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HintLabel"
+text = "戴上眼镜"
+
+[node name="EraBlockedRow" type="HBoxContainer" parent="Root/EraTag/Box"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Icon" type="Control" parent="Root/EraTag/Box/EraBlockedRow"]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("3_glyph")
+kind = "blocked"
+color = Color(0.898, 0.5412, 0.451, 1)
+
+[node name="EraBlocked" type="Label" parent="Root/EraTag/Box/EraBlockedRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HintLabel"
+text = "无法切换时代"
+
+[node name="PromptRow" type="HBoxContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 84.0
+offset_bottom = 134.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="Prompt" parent="Root/PromptRow" instance=ExtResource("4_prompt")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="Toasts" type="VBoxContainer" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -320.0
+offset_top = 40.0
+offset_right = 320.0
+offset_bottom = 300.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="KeyHints" type="HBoxContainer" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -560.0
+offset_top = -72.0
+offset_right = -48.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="KeyE" type="PanelContainer" parent="Root/KeyHints"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"KeyCap"
+
+[node name="Label" type="Label" parent="Root/KeyHints/KeyE"]
+layout_mode = 2
+theme_type_variation = &"KeyCapLabel"
+text = "E"
+
+[node name="HintE" type="Label" parent="Root/KeyHints"]
+layout_mode = 2
+theme_type_variation = &"HintLabel"
+text = "交互"
+
+[node name="Gap1" type="Control" parent="Root/KeyHints"]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="KeyQ" type="PanelContainer" parent="Root/KeyHints"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"KeyCap"
+
+[node name="Label" type="Label" parent="Root/KeyHints/KeyQ"]
+layout_mode = 2
+theme_type_variation = &"KeyCapLabel"
+text = "Q"
+
+[node name="HintQ" type="Label" parent="Root/KeyHints"]
+layout_mode = 2
+theme_type_variation = &"HintLabel"
+text = "切换时代"
+
+[node name="Gap2" type="Control" parent="Root/KeyHints"]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="KeyR" type="PanelContainer" parent="Root/KeyHints"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"KeyCap"
+
+[node name="Label" type="Label" parent="Root/KeyHints/KeyR"]
+layout_mode = 2
+theme_type_variation = &"KeyCapLabel"
+text = "R"
+
+[node name="HintR" type="Label" parent="Root/KeyHints"]
+layout_mode = 2
+theme_type_variation = &"HintLabel"
+text = "返回检查点"
+
+[node name="Notice" type="Label" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 48.0
+offset_top = -72.0
+offset_right = 1100.0
+offset_bottom = -40.0
+grow_vertical = 0
+theme_type_variation = &"MutedLabel"
+vertical_alignment = 1
+
+[node name="Debug" type="Label" parent="Root"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 48.0
+offset_top = -220.0
+offset_right = 1100.0
+offset_bottom = -84.0
+grow_vertical = 0
+theme_type_variation = &"DebugLabel"
+vertical_alignment = 2
+autowrap_mode = 3

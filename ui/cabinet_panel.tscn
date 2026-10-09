@@ -1,0 +1,176 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/cabinet_panel.gd" id="1_panel"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://ui/widgets/ui_glyph.gd" id="3_glyph"]
+
+[node name="CabinetPanel" type="CanvasLayer"]
+layer = 20
+visible = false
+script = ExtResource("1_panel")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme = ExtResource("2_theme")
+
+[node name="Dim" type="ColorRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0314, 0.0353, 0.0353, 0.66)
+
+[node name="Center" type="CenterContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Sheet" type="PanelContainer" parent="Root/Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+theme_type_variation = &"PlatePaper"
+
+[node name="Box" type="VBoxContainer" parent="Root/Center/Sheet"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Head" type="VBoxContainer" parent="Root/Center/Sheet/Box"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag" type="Label" parent="Root/Center/Sheet/Box/Head"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PaperTag"
+text = "DISTRIBUTION BOX · 配电箱"
+
+[node name="Title" type="Label" parent="Root/Center/Sheet/Box/Head"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PaperTitle"
+text = "配电箱"
+
+[node name="Display" type="PanelContainer" parent="Root/Center/Sheet/Box"]
+layout_mode = 2
+theme_type_variation = &"CodeDisplay"
+
+[node name="Slots" type="HBoxContainer" parent="Root/Center/Sheet/Box/Display"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Note" type="PanelContainer" parent="Root/Center/Sheet/Box"]
+layout_mode = 2
+theme_type_variation = &"NotePaper"
+
+[node name="Row" type="HBoxContainer" parent="Root/Center/Sheet/Box/Note"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="NoteIcon" type="Control" parent="Root/Center/Sheet/Box/Note/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(22, 22)
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+script = ExtResource("3_glyph")
+color = Color(0.1137, 0.0941, 0.0706, 1)
+
+[node name="Texts" type="VBoxContainer" parent="Root/Center/Sheet/Box/Note/Row"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="NoteTitle" type="Label" parent="Root/Center/Sheet/Box/Note/Row/Texts"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PaperBody"
+text = "输入 4 位密码"
+
+[node name="NoteBody" type="Label" parent="Root/Center/Sheet/Box/Note/Row/Texts"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"PaperMuted"
+text = ""
+
+[node name="Keypad" type="GridContainer" parent="Root/Center/Sheet/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="Footer" type="HBoxContainer" parent="Root/Center/Sheet/Box"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="KeyEnter" type="PanelContainer" parent="Root/Center/Sheet/Box/Footer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"KeyCapInk"
+
+[node name="Label" type="Label" parent="Root/Center/Sheet/Box/Footer/KeyEnter"]
+layout_mode = 2
+theme_type_variation = &"KeyCapInkLabel"
+text = "Enter"
+
+[node name="HintEnter" type="Label" parent="Root/Center/Sheet/Box/Footer"]
+layout_mode = 2
+theme_type_variation = &"PaperMuted"
+text = "确认"
+
+[node name="Gap" type="Control" parent="Root/Center/Sheet/Box/Footer"]
+custom_minimum_size = Vector2(6, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="KeyEsc" type="PanelContainer" parent="Root/Center/Sheet/Box/Footer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"KeyCapInk"
+
+[node name="Label" type="Label" parent="Root/Center/Sheet/Box/Footer/KeyEsc"]
+layout_mode = 2
+theme_type_variation = &"KeyCapInkLabel"
+text = "Esc"
+
+[node name="HintEsc" type="Label" parent="Root/Center/Sheet/Box/Footer"]
+layout_mode = 2
+theme_type_variation = &"PaperMuted"
+text = "取消"
+
+[node name="Spacer" type="Control" parent="Root/Center/Sheet/Box/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="CancelButton" type="Button" parent="Root/Center/Sheet/Box/Footer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"PaperKeyQuiet"
+text = "取消"
+
+[node name="CodeInput" type="LineEdit" parent="Root"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 4.0
+offset_bottom = 4.0
+mouse_filter = 2
+context_menu_enabled = false
+virtual_keyboard_enabled = false
+caret_blink = false
+flat = true
+select_all_on_focus = false
