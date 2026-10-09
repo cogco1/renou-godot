@@ -2,6 +2,10 @@ extends Node3D
 ## Primitive adapter/reference. Level teams replace geometry in their own adapters.
 const StateService = preload("res://core/state_service.gd")
 const Player = preload("res://core/player.gd")
+const HudScene = preload("res://ui/hud.tscn")
+const CabinetPanelScene = preload("res://ui/cabinet_panel.tscn")
+const UiText = preload("res://ui/ui_text.gd")
+const UiTheme = preload("res://ui/theme.tres")
 const QUERY_COMMON := 65536
 const QUERY_PRESENT := 131072
 const QUERY_PAST := 262144
@@ -16,10 +20,11 @@ var trigger_boxes: Dictionary = {}
 var labels: Array = []
 var index := 0
 var level_ids := ["mvp_bridge", "mvp_valve", "mvp_cabinet"]
-var hud: Label
-var notice: Label
-var code_panel: PanelContainer
-var code_input: LineEdit
+var hud: CanvasLayer  # res://ui/hud.tscn
+var notice: Label  # hud.notice_label
+var code_panel: CanvasLayer  # res://ui/cabinet_panel.tscn
+var code_input: LineEdit  # code_panel.line_edit
+var device_meta: Dictionary = {}  # device_id -> manifest entry, for prompts
 var wheel: Node3D
 var gate: Node3D
 var door: Node3D
@@ -42,11 +47,8 @@ func _ready() -> void:
 		var r: Dictionary = service.register_level(manifest)
 		assert(r.accepted, str(r))
 		completions[id] = 0
-	service.level_completed.connect(func(id):
-		completions[id] += 1
-		notice.text = "COMPLETED | " + id + " | Free movement / Q / restart still available")
-	service.feedback.connect(func(r):
-		if not r.accepted: notice.text = "Request rejected: " + str(r.reason))
+	service.level_completed.connect(func(id): completions[id] += 1)
+	# Rejections, flags and completion are shown by the HUD via bind_service().
 	_setup_ui()
 	var light := DirectionalLight3D.new()
 	light.rotation_degrees = Vector3(-45, -25, 0)
@@ -82,42 +84,16 @@ func _setup_input() -> void:
 		InputMap.action_add_event(action, key)
 
 func _setup_ui() -> void:
-	var canvas := CanvasLayer.new()
-	add_child(canvas)
-	hud = Label.new()
-	hud.position = Vector2(24, 18)
-	hud.size = Vector2(1230, 160)
-	hud.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	hud.add_theme_font_size_override("font_size", 18)
-	canvas.add_child(hud)
-	notice = Label.new()
-	notice.position = Vector2(24, 640)
-	notice.size = Vector2(1230, 75)
-	notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	notice.add_theme_font_size_override("font_size", 18)
-	canvas.add_child(notice)
-	var crosshair := Label.new()
-	crosshair.text = "+"
-	crosshair.position = Vector2(635, 352)
-	canvas.add_child(crosshair)
-	code_panel = PanelContainer.new()
-	code_panel.position = Vector2(380, 245)
-	code_panel.custom_minimum_size = Vector2(520, 180)
-	canvas.add_child(code_panel)
-	var box := VBoxContainer.new()
-	code_panel.add_child(box)
-	var title := Label.new()
-	title.text = "LOCAL TEST ONLY: 0427\nFinal story code is UNCONFIRMED\nEnter: submit | Escape: cancel"
-	box.add_child(title)
-	code_input = LineEdit.new()
-	code_input.placeholder_text = "Test code"
-	box.add_child(code_input)
-	code_input.text_submitted.connect(submit_code)
-	var submit := Button.new()
-	submit.text = "Submit"
-	submit.pressed.connect(func(): submit_code(code_input.text))
-	box.add_child(submit)
-	code_panel.hide()
+	# UI scenes are owned by the UI lead (ui/README.md); this adapter only wires signals.
+	hud = HudScene.instantiate()
+	add_child(hud)
+	hud.bind_service(service)
+	notice = hud.notice_label
+	code_panel = CabinetPanelScene.instantiate()
+	add_child(code_panel)
+	code_input = code_panel.line_edit
+	code_panel.submitted.connect(submit_code)
+	code_panel.cancelled.connect(func(): service.cancel_puzzle_ui())
 
 func select_level(which: int) -> void:
 	ready_to_play = false
@@ -151,11 +127,11 @@ func select_level(which: int) -> void:
 	trigger_boxes["exit_trigger"] = AABB(Vector3(-2, -0.2, exit_z - 1), Vector3(4, 2.5, 2))
 	devices["exit_trigger"] = Vector3(0, 1, exit_z)
 	_box("ExitMarker", Vector3(0, 0.03, exit_z), Vector3(3, 0.06, 1.5), Color("72cca5"), "none")
-	_sign("EXIT", Vector3(0, 2.5, exit_z))
+	_sign("出口", Vector3(0, 2.5, exit_z))
 	_box("Scale_1m", Vector3(2.5, 0.5, 3), Vector3(0.15, 1, 0.15), Color("f0d56a"), "common")
 	_sign("1 m", Vector3(2.5, 1.35, 3))
 	_box("CheckpointMarker", Vector3(0, 0.025, 1), Vector3(1.4, 0.05, 1.4), Color("65a6db"), "none")
-	_sign("CHECKPOINT", Vector3(0, 2.7, 1))
+	_sign("检查点", Vector3(0, 2.7, 1))
 	if index == 0: _build_bridge()
 	else:
 		_box("Floor", Vector3(0,-0.3,-7), Vector3(6,0.6,24), Color("566578"), "common")
@@ -165,8 +141,10 @@ func select_level(which: int) -> void:
 		else: _build_cabinet()
 	var r: Dictionary = service.activate(level_ids[index], self)
 	assert(r.accepted)
+	device_meta.clear()
+	for d in service.manifest().devices: device_meta[d.device_id] = d
 	last_checkpoint_overlap = false
-	notice.text = "Independent primitive integration candidate | Click to capture mouse"
+	notice.text = UiText.level_name(level_ids[index]) + " · " + UiText.START_NOTICE
 	ready_to_play = true
 
 func _anchor(n: String, p: Vector3) -> void:
@@ -185,7 +163,7 @@ func _build_bridge() -> void:
 		_box("PastRail",Vector3(x,0.65,-8.5),Vector3(0.1,1.3,11),Color("8b9ca8"),"past")
 	trigger_boxes["far_landing"] = AABB(Vector3(-2.8,-0.2,-22), Vector3(5.6,2.5,7.5))
 	devices["far_landing"] = Vector3(0,1,-16)
-	_sign("Q: PAST BRIDGE | 7.8 m PRESENT GAP",Vector3(0,3,-3))
+	_sign("危险 · 桥面断裂",Vector3(0,3,-3))
 
 func _build_valve() -> void:
 	_box("ValveShell", Vector3(-2,1,0), Vector3(0.7,2,0.7), Color("81735a"), "common")
@@ -204,7 +182,7 @@ func _build_valve() -> void:
 	steam = _box("SteamHazard",Vector3(0,1,-8),Vector3(5.8,2,2),Color(0.8,0.85,0.9,0.4),"none")
 	devices["steam_hazard"] = Vector3(0,1,-8)
 	trigger_boxes["steam_hazard"] = AABB(Vector3(-3,-0.2,-9), Vector3(6,2.5,2))
-	_sign("E: CLOSE VALVE IN PAST\nISOLATION LEAF STAYS BESIDE THE ROUTE",Vector3(0,3,-1))
+	_sign("检修隔离：关闭阀门，隔离门闭合",Vector3(0,3,-1))
 
 func _build_cabinet() -> void:
 	_box("CabinetShell",Vector3(-2,1,0),Vector3(0.7,2,1),Color("687c80"),"common")
@@ -227,7 +205,7 @@ func _build_cabinet() -> void:
 		lamp.light_color = Color("ffe6b5")
 		world.add_child(lamp)
 		lights.append(lamp)
-	_sign("PAST: READ PLAQUE | PRESENT: INPUT THEN BUTTON\nLOCAL TEST CODE 0427 - NOT STORY APPROVED",Vector3(0,3,-1))
+	_sign("送电程序：输入密码 → 按下启动按钮",Vector3(0,3,-1))
 
 func _box(n: String, p: Vector3, size: Vector3, color: Color, era: String, parent: Node3D = null) -> MeshInstance3D:
 	if parent == null: parent = world
@@ -259,6 +237,7 @@ func _sign(text: String, p: Vector3) -> void:
 	var label := Label3D.new()
 	label.text = text
 	label.position = p
+	label.font = UiTheme.default_font  # CJK-capable UI body font
 	label.font_size = 32
 	label.pixel_size = 0.008
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
@@ -332,8 +311,7 @@ func reset_player(checkpoint_id) -> void:
 	reset_count += 1
 func cancel_transients() -> void:
 	if is_instance_valid(code_panel):
-		code_panel.hide()
-		code_input.text = ""
+		code_panel.close()  # hides and clears the input
 	if DisplayServer.get_name() != "headless": Input.mouse_mode = mouse_before_ui
 	# No delayed state writers or animations in MVP. Future tweens must be killed here.
 
@@ -344,9 +322,8 @@ func send(kind: String, extra: Dictionary = {}) -> Dictionary:
 func interact(id: String, action: String, value = null) -> Dictionary:
 	return send("interact.request",{"device_id":id,"action":action,"value":value})
 func submit_code(value: String) -> void:
-	var r := interact("cabinet","submit_code",value)
-	notice.text = "Cabinet unlocked. E at start button." if r.accepted else "Code result: " + str(r.reason) + " | E to retry"
-func interact_nearest() -> void:
+	interact("cabinet","submit_code",value)  # HUD shows 密码正确 / 密码不对 from state + feedback
+func nearest_device() -> String:
 	var best := ""
 	var distance := INF
 	for id in devices:
@@ -356,23 +333,36 @@ func interact_nearest() -> void:
 			if d < distance:
 				distance = d
 				best = id
-	if best.is_empty():
-		notice.text = "No device in range (2.5 m / line of sight)"
-		return
 	if index == 2 and best in ["cabinet","plaque"]:
 		best = "plaque" if service.snapshot().era == "past" else "cabinet"
+	return best
+func interact_nearest() -> void:
+	var best := nearest_device()
+	if best.is_empty(): return
 	if best == "cabinet":
 		var r: Dictionary = service.open_puzzle_ui(best)
 		if r.accepted:
 			mouse_before_ui = Input.mouse_mode
-			code_panel.show()
-			code_input.grab_focus()
+			hud.hide_interaction()
+			code_panel.open(best)
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		else: notice.text = str(r.reason)
+		else: hud.show_reason(str(r.reason))
 	else:
 		var action: String = {"valve":"close","plaque":"read","start_button":"press"}[best]
 		var r := interact(best,action)
-		if r.accepted: notice.text = "LOCAL TEST CLUE: 0427" if best == "plaque" else best + ": accepted"
+		if r.accepted and best == "plaque": hud.show_flag_note("clue_seen")  # show the code again on every read
+## Interaction prompt for the nearest device; greyed out with a reason when it belongs to the other era.
+func _update_prompt() -> void:
+	var best := nearest_device() if service.world_enabled() else ""
+	if best.is_empty() or not device_meta.has(best):
+		hud.hide_interaction()
+		return
+	var meta: Dictionary = device_meta[best]
+	var eras: Array = meta.get("available_eras", [])
+	var blocked := ""
+	if not eras.is_empty() and service.snapshot().era not in eras:
+		blocked = UiText.ONLY_IN_ERA.get(eras[0], "")
+	hud.show_interaction(best, meta.actions[0], blocked)
 
 func _input(event: InputEvent) -> void:
 	if not ready_to_play: return
@@ -382,7 +372,10 @@ func _input(event: InputEvent) -> void:
 			else: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		if service.world_enabled():
 			if event.keycode in [KEY_1,KEY_2,KEY_3]: select_level(event.keycode - KEY_1)
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and service.world_enabled(): Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		if event.keycode == KEY_F3: hud.debug_visible = not hud.debug_visible
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and service.world_enabled():
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		notice.text = ""
 
 func _physics_process(_delta: float) -> void:
 	if not ready_to_play: return
@@ -393,12 +386,14 @@ func _physics_process(_delta: float) -> void:
 	elif Input.is_action_just_pressed("interact") and service.world_enabled(): interact_nearest()
 	if player.position.y < -5 or (hazard_active and trigger_boxes.steam_hazard.has_point(player.position)):
 		send("reset.request",{"reset_mode":"checkpoint"})
-		notice.text = "Failure recovered from checkpoint / initial state"
+		hud.show_note(UiText.RECOVERED_NOTE)
 	if auto_triggers and service.world_enabled():
 		var cp := checkpoint_in_range("Anchors/Checkpoint")
 		if cp and not last_checkpoint_overlap: send("checkpoint.reached",{"device_id":"Anchors/Checkpoint"})
 		last_checkpoint_overlap = cp
 		if index == 0 and at_far_landing() and service.snapshot().era == "past" and not service.snapshot().flags.bridge_crossed_past: interact("far_landing","enter")
 		if in_range("exit_trigger") and not service.snapshot().flags.exit_reached: interact("exit_trigger","enter")
-	var state: Dictionary = service.snapshot()
-	hud.text = "PRIMITIVE / GODOT 4.7.2 / LOCAL CANDIDATE\n" + level_ids[index] + " | " + state.era.to_upper() + " | " + service.input_mode + "\nWASD / mouse / Space | E interact | Q era | R checkpoint | T restart | 1/2/3 level\n" + str(state.flags)
+	_update_prompt()
+	if hud.debug_visible:  # F3
+		var state: Dictionary = service.snapshot()
+		hud.set_debug_text("PRIMITIVE / GODOT 4.7.2 / LOCAL CANDIDATE\n" + level_ids[index] + " | " + state.era.to_upper() + " | " + service.input_mode + "\nWASD / mouse / Space | E interact | Q era | R checkpoint | T restart | 1/2/3 level | F3 debug\n" + str(state.flags))

@@ -1,7 +1,8 @@
 ﻿param(
   [string]$Out = (Join-Path $PSScriptRoot '..\screenshots'),
   [string]$Godot = 'E:\PROJECTS\04_COMPETITIONS_竞赛\人偶之心\tmp\tools\godot-4.7.2\Godot_v4.7.2-stable_win64_console.exe',
-  [string]$Lock = 'E:\PROJECTS\04_COMPETITIONS_竞赛\人偶之心\tmp\bridge-render.lock'
+  [string]$Lock = 'E:\PROJECTS\04_COMPETITIONS_竞赛\人偶之心\tmp\bridge-render.lock',
+  [switch]$Lab   # 截主场景 integration_lab 接上 UI 后的实机画面（ui/tests/lab_capture.gd）
 )
 # UI 预览截图：在 1920×1080 窗口里把 ui/preview 的 10 个状态各截一张 PNG。
 # 要用本机 GPU，所以照 Test.ps1 的做法拿共享锁 bridge-render.lock；锁被占用就退出，不强行解锁。
@@ -17,7 +18,8 @@ $writer = [System.IO.StreamWriter]::new($stream)
 $writer.Write((@{ pid = $PID; token = $token; output = $outAbs; job = 'renou-godot ui capture'; created = [DateTime]::UtcNow.ToString('o') } | ConvertTo-Json -Compress))
 $writer.Dispose()
 try {
-  & $Godot --path $project --resolution 1920x1080 res://ui/preview/ui_preview.tscn -- ('--ui-capture=' + $outAbs)
+  if ($Lab) { & $Godot --path $project --resolution 1920x1080 --script res://ui/tests/lab_capture.gd -- ('--ui-capture=' + $outAbs) }
+  else { & $Godot --path $project --resolution 1920x1080 res://ui/preview/ui_preview.tscn -- ('--ui-capture=' + $outAbs) }
   $code = $LASTEXITCODE
 }
 finally {
