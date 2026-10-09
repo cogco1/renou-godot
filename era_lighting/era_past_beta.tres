@@ -9,5 +9,6 @@ era_name = "past"
 environment = ExtResource("1_xsftm")
 compat_exposure = 0.95
 forward_plus_exposure = 1.15
+sun_compass_deg = 105.0
 sun_color = Color(1, 0.74, 0.48, 1)
 sun_energy = 1.9

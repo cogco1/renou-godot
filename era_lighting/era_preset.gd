@@ -22,7 +22,8 @@ extends Resource
 @export var city_volumetric_fog := false
 
 @export_group("Sun")
-## Where the sun is, degrees clockwise from north (-Z). 65 = east-north-east (morning), 255 = west-south-west (dusk).
+## Where the sun is, degrees clockwise from north (-Z). The presets use 105 (past, morning, east-south-east) and
+## 295 (present, late afternoon, west-north-west): the same bearings as the UE film's side light (2026-10-09).
 @export_range(0.0, 360.0) var sun_compass_deg := 65.0
 ## Height of the sun above the horizon, degrees.
 @export_range(-10.0, 90.0) var sun_elevation_deg := 10.0
