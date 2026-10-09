@@ -1,5 +1,10 @@
 extends Node
 ## Real Godot tests. Semantic cases teleport fixtures; routes use Input + move_and_slide.
+## `-- --valve-flow` runs only the mvp_valve V1-V5 flow (_valve_flow) and writes evidence/valve-flow-results.json.
+const VALVE_EXIT_Z := -74.5
+const LEVER_STAND := Vector3(-2.0, 0.04, -56.0)   # 1.35 m from the relay lever, north transfer landing
+const DECK_STAND := Vector3(0, 0.04, -61.0)       # on the aligned deck
+const LEVER_CHECKPOINT_POS := Vector3(0, 0.04, -53.0)   # Anchors/Checkpoint2 (scenes/integration_lab.gd LEVER_CHECKPOINT)
 var lab
 var rows: Array = []
 var failed := 0
@@ -41,6 +46,20 @@ func walk_to(z: float, limit: int = 600) -> bool:
 	await frames(3)
 	return reached
 
+## Sidestep with the real move_left / move_right input until x passes the target.
+func strafe_to_x(x: float, left: bool, limit: int = 300) -> bool:
+	var action_name := "move_left" if left else "move_right"
+	Input.action_press(action_name)
+	var reached := false
+	for i in limit:
+		await frames(1)
+		if (left and lab.player.position.x <= x) or (not left and lab.player.position.x >= x):
+			reached = true
+			break
+	Input.action_release(action_name)
+	await frames(3)
+	return reached
+
 func key(action_name: String) -> void:
 	Input.action_press(action_name)
 	await frames(2)
@@ -50,6 +69,10 @@ func key(action_name: String) -> void:
 func run(target) -> void:
 	lab = target
 	await frames(10)
+	if "--valve-flow" in OS.get_cmdline_user_args():
+		await _valve_flow()
+		_finish("res://evidence/valve-flow-results.json", "VALVE_FLOW_SUMMARY")
+		return
 	lab.auto_triggers = false
 	lab.select_level(1)
 	await frames(8)
@@ -68,9 +91,15 @@ func run(target) -> void:
 	r = await action("missing","close")
 	check("unknown_device",r.reason == "unknown_device","Unknown stable ID refused")
 	r = await action("valve","close")
-	check("era_before_range",r.reason == "wrong_era","present valve unavailable even when out of range")
+	check("valve_present_range",r.reason == "out_of_range","Valve is listed in both eras now (present answers seized); range still enforced")
+	await place(Vector3(0,0.04,0.8))
+	r = await action("valve","close")
+	check("valve_seized_present",r.reason == "seized" and not lab.service.snapshot().flags.valve_closed_past and lab.hazard_active,"In range in the present: rusted solid, no flag, steam stays (V1)")
+	await place(Vector3(0,0.04,3))
 	r = await switch_to("past")
 	check("safe_switch",r.accepted and lab.service.snapshot().era == "past","Ground/capsule queries accept safe platform","engine_physics")
+	r = await action("steam_hazard","inspect")
+	check("era_before_range",r.reason == "wrong_era","Past: present-only steam hazard reports era before range")
 	r = await action("valve","close")
 	check("range_enforced",r.reason == "out_of_range","Spawn > 2.5 m from device","engine_physics")
 	await place(Vector3(0,0.04,0.8))
@@ -81,7 +110,7 @@ func run(target) -> void:
 	r = await action("valve","close")
 	check("idempotent_close",r.accepted and lab.service.snapshot().flags.valve_closed_past,"Later repeated close never toggles open")
 	r = await switch_to("present")
-	check("valve_persists",r.accepted and not lab.hazard_active and lab.gate.position.z == -5.0,"present rebuild removes steam and closes SIDE isolation leaf")
+	check("valve_persists",r.accepted and not lab.hazard_active and lab.gate.is_closed() and is_equal_approx(lab.gate.progress(),1.0),"present rebuild removes steam; 40 m gate rebuilt fully closed")
 	await place(Vector3(0,0.04,1))
 	r = lab.send("checkpoint.reached",{"device_id":"Anchors/Checkpoint"})
 	var saved = lab.service.snapshot()
@@ -186,14 +215,100 @@ func run(target) -> void:
 		var image = get_viewport().get_texture().get_image()
 		var error = image.save_png("res://evidence/standalone_valve.png")
 		check("rendered_capture",error == OK,"Actual non-headless Godot viewport after automated player input","engine_render")
+	await _valve_flow()
 	await _era_lighting_profiles()
-	var report = {"engine":Engine.get_version_info().string,"entry":"res://scenes/integration_lab.tscn","scope":"primitive independent candidate","human_manual_play":"not_run","exported_build":"not_run","source_asset_import":"not_run","passed":rows.size()-failed,"failed":failed,"results":rows}
 	var output = "res://evidence/runtime-render-results.json" if "--capture" in OS.get_cmdline_user_args() else "res://evidence/runtime-results.json"
+	_finish(output, "MVP_TEST_SUMMARY")
+
+func _finish(output: String, tag: String) -> void:
+	var report = {"engine":Engine.get_version_info().string,"entry":"res://scenes/integration_lab.tscn","scope":"primitive independent candidate","human_manual_play":"not_run","exported_build":"not_run","source_asset_import":"not_run","passed":rows.size()-failed,"failed":failed,"results":rows}
 	var file = FileAccess.open(output,FileAccess.WRITE)
 	file.store_string(JSON.stringify(report,"  "))
 	file.close()
-	print("MVP_TEST_SUMMARY " + str(rows.size()-failed) + "/" + str(rows.size()) + " passed")
+	print(tag + " " + str(rows.size()-failed) + "/" + str(rows.size()) + " passed")
 	get_tree().quit(0 if failed == 0 else 1)
+
+## mvp_valve V1-V5 (录制镜头清单_阀门_v003) with the 40 m gate and the transfer platform, plus the acceptance
+## items of 接口对齐_大门与转运平台_v001 section 5. Semantic: teleports for position, real requests for every action.
+func _valve_flow() -> void:
+	lab.auto_triggers = false
+	lab.select_level(1)
+	await frames(8)
+	await reset()
+	var count: int = lab.completions.mvp_valve
+	var gate = lab.gate
+	var deck = lab.platform
+	var flags = func() -> Dictionary: return lab.service.snapshot().flags
+	check("flow_start",not gate.is_closed() and gate.hazard_active and is_equal_approx(deck.deck_x(),-deck.travel_m) and deck.detent == 1 and not deck.locked,"Present start: gate open with steam, deck parked 13.85 m away, lever at detent 1")
+	# V1 present: valve and lever are rusted solid
+	await place(Vector3(0,0.04,0.8))
+	var r = await action("valve","close")
+	check("flow_v1_valve_seized",r.reason == "seized" and not flags.call().valve_closed_past and gate.hazard_active,"V1 present valve -> seized (UI 已锈死); flag and steam unchanged")
+	await place(LEVER_STAND)
+	r = await action("relay_lever","pull")
+	check("flow_lever_seized_present",r.reason == "seized" and not flags.call().platform_locked_past and is_equal_approx(deck.deck_x(),-deck.travel_m),"Present lever -> seized; deck stays parked")
+	await place(Vector3(0,0.04,VALVE_EXIT_Z))
+	r = await action("exit_trigger","enter")
+	check("flow_exit_nothing",r.reason == "prerequisites_unmet" and not lab.service.is_complete(),"Exit with neither flag -> prerequisites_unmet")
+	# V2 past: close the valve, the 40 m gate starts its 6 s close
+	await place(Vector3(0,0.04,0.8))
+	await switch_to("past")
+	r = await action("valve","close")
+	await frames(30)
+	check("flow_v2_valve_closed",r.accepted and flags.call().valve_closed_past and gate.is_closed() and gate.progress() > 0.0 and gate.progress() < 1.0,"V2 past valve accepted; gate closing animation running (progress %.2f after 0.5 s)" % gate.progress())
+	r = await action("valve","close")
+	check("flow_v2_idempotent",r.accepted and gate.is_closed(),"Second close accepted, stays closed, no replay from open")
+	# V3 present: gate rebuilt fully closed, no steam
+	r = await switch_to("present")
+	check("flow_v3_present_gate_closed",r.accepted and gate.is_closed() and is_equal_approx(gate.progress(),1.0) and not gate.hazard_active and not lab.hazard_active,"V3 present: rebuild puts the gate fully closed, steam off")
+	await place(Vector3(0,0.04,VALVE_EXIT_Z))
+	r = await action("exit_trigger","enter")
+	check("flow_exit_valve_only",r.reason == "prerequisites_unmet" and not lab.service.is_complete(),"Exit with valve only -> prerequisites_unmet")
+	# V4 past: pull the lever once; deck slides 13.85 m, pins drop
+	await place(LEVER_STAND)
+	await switch_to("past")
+	r = await action("relay_lever","pull")
+	check("flow_v4_lever_pulled",r.accepted and flags.call().platform_locked_past and deck.locked,"V4 past lever accepted; platform_locked_past written at once")
+	await frames(420)
+	check("flow_v4_sequence_done",is_equal_approx(deck.deck_x(),0.0) and deck.detent == 3 and is_equal_approx(deck.pins_progress(),1.0),"After ~7 s: deck aligned, lever at detent 3, pins in")
+	r = await action("relay_lever","pull")
+	check("flow_v4_already_locked",r.reason == "already_locked" and deck.detent == 3,"Second past pull -> already_locked (UI 已锁定), no replay")
+	await place(LEVER_CHECKPOINT_POS)
+	lab.send("checkpoint.reached",{"device_id":"Anchors/Checkpoint2"})
+	var lever_cp = lab.service.snapshot()
+	await place(LEVER_STAND)
+	r = await switch_to("present")
+	r = await action("relay_lever","pull")
+	check("flow_present_locked_seized",r.reason == "seized","Present pull on the locked lever -> seized (era before lock)")
+	# V5 present: deck still aligned and locked; first step onto it drops the shutter in 3 s
+	check("flow_v5_present_deck",is_equal_approx(deck.deck_x(),0.0) and is_equal_approx(deck.pins_progress(),1.0) and deck.detent == 3 and not deck.shutter_down,"V5 present: deck aligned, pins in, shutter still up")
+	await place(DECK_STAND)
+	await frames(10)
+	var on_deck: bool = lab.player.is_on_floor() and lab.player.position.y > -0.2
+	await frames(200)
+	check("flow_v5_shutter",on_deck and deck.shutter_down and deck.shutter_blocking(),"Standing on the deck: shutter dropped (3 s) and blocks the direct doorway")
+	# Exit with both flags: completes once
+	await place(Vector3(0,0.04,VALVE_EXIT_Z))
+	r = await action("exit_trigger","enter")
+	check("flow_exit_complete",r.accepted and lab.service.is_complete() and lab.completions.mvp_valve == count+1,"Exit with both flags in the present -> level.completed")
+	r = await action("exit_trigger","enter")
+	await frames(10)
+	check("flow_complete_once",lab.completions.mvp_valve == count+1,"Completion is emitted once")
+	# Five era round trips: everything derived again from flags + era
+	var stable := true
+	for i in 5:
+		await switch_to("past")
+		stable = stable and gate.is_closed() and is_equal_approx(deck.deck_x(),0.0) and deck.detent == 3 and not deck.shutter_blocking()
+		await switch_to("present")
+		stable = stable and gate.is_closed() and not gate.hazard_active and is_equal_approx(deck.deck_x(),0.0) and deck.shutter_blocking()
+	check("flow_era_round_trips",stable and lab.service.snapshot().era == "present","5 x past/present: gate closed, deck aligned, shutter only in the present - no half-way states")
+	# R: back to the lever checkpoint (past, both flags); T: everything back to the start
+	lab.send("reset.request",{"reset_mode":"checkpoint"})
+	await frames(5)
+	check("flow_checkpoint_reset",lab.service.snapshot() == lever_cp and lab.player.position.distance_to(LEVER_CHECKPOINT_POS) < 0.2 and gate.is_closed() and is_equal_approx(deck.deck_x(),0.0),"R: lever checkpoint snapshot (past, both flags) and its anchor; mechanisms rebuilt")
+	await reset()
+	check("flow_restart",not flags.call().valve_closed_past and not flags.call().platform_locked_past and not gate.is_closed() and gate.hazard_active and is_equal_approx(deck.deck_x(),-deck.travel_m) and deck.detent == 1 and not deck.shutter_down and not deck.shutter_blocking(),"T: flags false, gate open with steam, deck parked, lever 1, shutter up and its memory cleared")
+	lab.auto_triggers = true
 
 func _physical_routes() -> void:
 	lab.auto_triggers = true
@@ -243,13 +358,19 @@ func _physical_routes() -> void:
 		lab.select_level(1)
 		await frames(8)
 		await reset()
+		var count = lab.completions.mvp_valve
 		await key("switch_era")
 		await walk_to(0.8)
 		await key("interact")
+		# Past: no steam, walk the 40 m gate passage to the north transfer landing, step over to the relay lever.
+		var at_lever = await walk_to(-56.0, 2000)
+		at_lever = at_lever and await strafe_to_x(-2.0, true)
+		await key("interact")
+		var locked: bool = lab.service.snapshot().flags.platform_locked_past
 		await key("switch_era")
-		var count = lab.completions.mvp_valve
-		var exited = await walk_to(-15)
-		check("valve_route_"+str(attempt+1),exited and lab.service.is_complete() and lab.completions.mvp_valve == count+1,"Spawn/Q/W/E/Q/W: past valve, present physical route, real exit trigger","engine_player_route")
+		await strafe_to_x(0.0, false)
+		var exited = await walk_to(VALVE_EXIT_Z, 2000)
+		check("valve_route_"+str(attempt+1),at_lever and locked and exited and lab.service.is_complete() and lab.completions.mvp_valve == count+1,"Spawn/Q/W/E/W/E/Q/W: past valve, past lever, present walk across the locked deck, real exit trigger","engine_player_route")
 	lab.select_level(2)
 	await frames(8)
 	await reset()

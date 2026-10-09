@@ -6,6 +6,15 @@ const HudScene = preload("res://ui/hud.tscn")
 const CabinetPanelScene = preload("res://ui/cabinet_panel.tscn")
 const UiText = preload("res://ui/ui_text.gd")
 const UiTheme = preload("res://ui/theme.tres")
+const EraLightingScene = preload("res://era_lighting/era_lighting.tscn")
+const GateScene = preload("res://mechanisms/steamhall/big_sliding_gate.tscn")
+const PlatformScene = preload("res://mechanisms/steamhall/transfer_platform.tscn")
+## mvp_valve test island = the steam-gallery demo slice (mechanisms/steamhall/demo), turned 180 deg so the player
+## still walks -Z from the lab spawn: demo (x, y, z) -> lab (4.35 - x, y, -62.5 - z). Valve station at z 0,
+## 40 m gate along z -4 .. -44, relay lever on the north transfer landing (z -56), deck centre z -62.5, exit z -74.5.
+const VALVE_DEMO_XF := Transform3D(Basis(Vector3.UP, PI), Vector3(4.35, 0.0, -62.5))
+const VALVE_EXIT_Z := -74.5
+const LEVER_CHECKPOINT := Vector3(0, 0.04, -53.0)
 const QUERY_COMMON := 65536
 const QUERY_PRESENT := 131072
 const QUERY_PAST := 262144
@@ -26,7 +35,10 @@ var code_panel: CanvasLayer  # res://ui/cabinet_panel.tscn
 var code_input: LineEdit  # code_panel.line_edit
 var device_meta: Dictionary = {}  # device_id -> manifest entry, for prompts
 var wheel: Node3D
-var gate: Node3D
+var gate: BigSlidingGate        # mvp_valve: 40 m isolation gate (mechanisms/steamhall)
+var platform: TransferPlatform  # mvp_valve: transfer platform + relay lever + shutter
+var era_lighting: EraLighting   # 视效 presets; one WorldEnvironment + sun for the whole lab
+var checkpoint_ids: Array = ["Anchors/Checkpoint"]
 var door: Node3D
 var steam: MeshInstance3D
 var lights: Array = []
@@ -34,7 +46,7 @@ var hazard_active := false
 var ready_to_play := false
 var auto_triggers := true
 var completions: Dictionary = {}
-var last_checkpoint_overlap := false
+var last_checkpoint_overlap: Dictionary = {}  # checkpoint id -> player was inside last frame
 var reset_count := 0
 var mouse_before_ui := Input.MOUSE_MODE_VISIBLE
 
@@ -50,18 +62,10 @@ func _ready() -> void:
 	service.level_completed.connect(func(id): completions[id] += 1)
 	# Rejections, flags and completion are shown by the HUD via bind_service().
 	_setup_ui()
-	var light := DirectionalLight3D.new()
-	light.rotation_degrees = Vector3(-45, -25, 0)
-	light.light_energy = 1.6
-	add_child(light)
-	var environment := WorldEnvironment.new()
-	environment.environment = Environment.new()
-	environment.environment.background_mode = Environment.BG_COLOR
-	environment.environment.background_color = Color("253143")
-	environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.environment.ambient_light_color = Color("c2d4e7")
-	environment.environment.ambient_light_energy = 0.65
-	add_child(environment)
+	# 视效's two-era lighting (past β / present α) replaces the lab's own light and environment; it follows the
+	# state through bind_service() once the first level is active. Preset values belong to 视效 (res://era_lighting/).
+	era_lighting = EraLightingScene.instantiate()
+	add_child(era_lighting)
 	player = Player.new()
 	player.name = "Player"
 	player.service = service
@@ -70,7 +74,9 @@ func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--level="): requested = clampi(int(arg.trim_prefix("--level=")) - 1, 0, 2)
 	select_level(requested)
-	if "--test" in OS.get_cmdline_user_args() or "--capture" in OS.get_cmdline_user_args():
+	era_lighting.bind_service(service)
+	var args := OS.get_cmdline_user_args()
+	if "--test" in args or "--capture" in args or "--valve-flow" in args:
 		var runner = load("res://tests/runtime_tests.gd").new()
 		add_child(runner)
 		runner.call_deferred("run", self)
@@ -106,8 +112,10 @@ func select_level(which: int) -> void:
 	lights.clear()
 	wheel = null
 	gate = null
+	platform = null
 	door = null
 	steam = null
+	checkpoint_ids = ["Anchors/Checkpoint"]
 	index = which
 	world = Node3D.new()
 	world.name = "Level"
@@ -122,7 +130,7 @@ func select_level(which: int) -> void:
 	_anchor("Spawn", Vector3(0, 0.04, 3))
 	_anchor("SafeReturn", Vector3(0, 0.04, 3))
 	_anchor("Checkpoint", Vector3(0, 0.04, 1))
-	var exit_z := -20.0 if index == 0 else -15.0
+	var exit_z := -20.0 if index == 0 else (VALVE_EXIT_Z if index == 1 else -15.0)
 	_anchor("Exit", Vector3(0, 0.04, exit_z))
 	trigger_boxes["exit_trigger"] = AABB(Vector3(-2, -0.2, exit_z - 1), Vector3(4, 2.5, 2))
 	devices["exit_trigger"] = Vector3(0, 1, exit_z)
@@ -133,17 +141,17 @@ func select_level(which: int) -> void:
 	_box("CheckpointMarker", Vector3(0, 0.025, 1), Vector3(1.4, 0.05, 1.4), Color("65a6db"), "none")
 	_sign("检查点", Vector3(0, 2.7, 1))
 	if index == 0: _build_bridge()
+	elif index == 1: _build_valve()
 	else:
 		_box("Floor", Vector3(0,-0.3,-7), Vector3(6,0.6,24), Color("566578"), "common")
 		_box("LeftWall", Vector3(-3.15,1.5,-7), Vector3(0.3,3,24), Color("64758a"), "common")
 		_box("RightWall", Vector3(3.15,1.5,-7), Vector3(0.3,3,24), Color("64758a"), "common")
-		if index == 1: _build_valve()
-		else: _build_cabinet()
+		_build_cabinet()
 	var r: Dictionary = service.activate(level_ids[index], self)
 	assert(r.accepted)
 	device_meta.clear()
 	for d in service.manifest().devices: device_meta[d.device_id] = d
-	last_checkpoint_overlap = false
+	last_checkpoint_overlap = {}
 	notice.text = UiText.level_name(level_ids[index]) + " · " + UiText.START_NOTICE
 	ready_to_play = true
 
@@ -166,6 +174,32 @@ func _build_bridge() -> void:
 	_sign("危险 · 桥面断裂",Vector3(0,3,-3))
 
 func _build_valve() -> void:
+	# Passage (demo frame, see VALVE_DEMO_XF): 8.7 m wide, north floor to the hoisting-well gap, south landing,
+	# cross wall with the direct doorway (a locked fire door in both eras; the system shutter drops in front of it).
+	var corridor := Node3D.new()
+	corridor.name = "Corridor"
+	corridor.transform = VALVE_DEMO_XF
+	world.add_child(corridor)
+	var w := 8.7
+	var deck_x := 4.15
+	var deck_col := Color("4a4c4f")
+	var brick := Color("5a3b30")
+	var steel := Color("1c1e20")
+	_box("FloorNorth", Vector3(w*0.5,-0.2,-36.5), Vector3(w,0.4,67), deck_col, "common", corridor)   # z -70 .. -3
+	_box("FloorSouth", Vector3(w*0.5,-0.2,11), Vector3(w,0.4,16), deck_col, "common", corridor)      # z 3 .. 19
+	_box("EastWall", Vector3(w+0.3,4.5,-25), Vector3(0.6,9,90), brick, "common", corridor)
+	_box("NorthWall", Vector3(w*0.5,4.5,-70.3), Vector3(w,9,0.6), brick, "common", corridor)
+	_box("ParapetNorth", Vector3(0,0.55,-64.25), Vector3(0.1,1.1,11.5), steel, "common", corridor)
+	_box("ParapetMid", Vector3(0,0.55,-10.75), Vector3(0.1,1.1,15.5), steel, "common", corridor)
+	_box("ParapetSouth", Vector3(0,0.55,10.75), Vector3(0.1,1.1,15.5), steel, "common", corridor)
+	for zz in [-3.1, 3.1]:   # funnel rails: only the deck lane (x 2.35 .. 5.95) and the pin housing are open
+		_box("GapRailWest", Vector3(0.65,0.55,zz), Vector3(1.3,1.1,0.1), steel, "common", corridor)
+		_box("GapRailEast", Vector3((deck_x+1.8+w)*0.5,0.55,zz), Vector3(w-deck_x-1.8,1.1,0.1), steel, "common", corridor)
+	_box("CrossWallWest", Vector3((deck_x-1.4)*0.5-0.05,2.5,19), Vector3(deck_x-1.4,5,1), brick, "common", corridor)
+	_box("CrossWallEast", Vector3((deck_x+1.6+w)*0.5,2.5,19), Vector3(w-deck_x-1.6,5,1), brick, "common", corridor)
+	_box("CrossWallLintel", Vector3(deck_x,4.6,19), Vector3(3.2,0.8,1), brick, "common", corridor)
+	_box("FireDoor", Vector3(deck_x,2.1,19.2), Vector3(3,4.2,0.2), Color("7a3b26"), "common", corridor)
+	# Valve station: unchanged from the primitive (main handwheel = ValvePivot).
 	_box("ValveShell", Vector3(-2,1,0), Vector3(0.7,2,0.7), Color("81735a"), "common")
 	wheel = Node3D.new()
 	wheel.name = "ValvePivot"
@@ -173,16 +207,49 @@ func _build_valve() -> void:
 	moving.add_child(wheel)
 	_box("Wheel", Vector3.ZERO, Vector3(0.1,0.7,0.7), Color("de9b53"), "common", wheel)
 	devices["valve"] = Vector3(-1.35,1.3,0)
-	gate = Node3D.new()
-	gate.name = "IsolationPivot"
-	gate.position = Vector3(-2.85,1.4,-5)
+	# 40 m BigSlidingGate on the passage's west side in the demo (east wall here), stack at the valve end.
+	gate = GateScene.instantiate()
+	gate.name = "IsolationGate"        # -> Moving/IsolationGate/PIVOT_IsolationGate, AREA_SteamCorridor inside
+	gate.stack_at_end = true
+	gate.transform = VALVE_DEMO_XF * Transform3D(Basis(Vector3.UP, deg_to_rad(90.0)), Vector3(0, 0, -18.5))
 	moving.add_child(gate)
-	_box("IsolationLeaf",Vector3.ZERO,Vector3(0.15,2.6,2),Color("907c62"),"common",gate)
-	devices["isolation_gate"] = Vector3(-2.6,1.4,-5)
-	steam = _box("SteamHazard",Vector3(0,1,-8),Vector3(5.8,2,2),Color(0.8,0.85,0.9,0.4),"none")
-	devices["steam_hazard"] = Vector3(0,1,-8)
-	trigger_boxes["steam_hazard"] = AABB(Vector3(-3,-0.2,-9), Vector3(6,2.5,2))
+	gate.steam_body_entered.connect(_on_mechanism_hazard, CONNECT_DEFERRED)
+	var steam_box: AABB = gate.global_transform * AABB(Vector3.ZERO, Vector3(gate.span_m, gate.steam_height_m, gate.steam_depth_m))
+	steam_box.position.y -= 0.2   # the area starts at floor level; the player's feet can sit a hair below y 0
+	steam_box.size.y += 0.2
+	trigger_boxes["steam_hazard"] = steam_box
+	devices["steam_hazard"] = steam_box.get_center()
+	devices["isolation_gate"] = gate.global_transform * Vector3(gate.span_m * 0.5, 1.4, 0)
+	# Transfer section after the valve: platform, three-detent relay lever, lock pins, shutter, fall volume.
+	platform = PlatformScene.instantiate()
+	platform.name = "TransferPlatform"
+	platform.transform = VALVE_DEMO_XF * Transform3D(Basis.IDENTITY, Vector3(deck_x, 0, 0))
+	moving.add_child(platform)
+	platform.fell_into_gap.connect(_on_mechanism_hazard, CONNECT_DEFERRED)
+	devices["relay_lever"] = platform.to_global(platform.lever_offset) + Vector3.UP
+	for root in [gate, platform]: _tag_common(root)
+	# Second checkpoint on the north transfer landing, before the lever.
+	_anchor("Checkpoint2", LEVER_CHECKPOINT)
+	checkpoint_ids = ["Anchors/Checkpoint", "Anchors/Checkpoint2"]
+	_box("Checkpoint2Marker", LEVER_CHECKPOINT - Vector3(0, 0.015, 0), Vector3(1.4,0.05,1.4), Color("65a6db"), "none")
+	_sign("检查点", LEVER_CHECKPOINT + Vector3(0, 2.66, 0))
 	_sign("检修隔离：关闭阀门，隔离门闭合",Vector3(0,3,-1))
+	_sign("转运平台",devices["relay_lever"] + Vector3(0, 1.6, 0))
+
+## Era-invariant mechanism bodies (gate leaves, deck, rails, relay cabinet, lever pedestal) answer the era-switch
+## probes like "common" primitives. The shutter is present-only and the component drives its layer itself.
+func _tag_common(root: Node) -> void:
+	for n in root.find_children("*", "PhysicsBody3D", true, false):
+		if n.name != "MOV_Shutter" and n.collision_layer & 1: n.collision_layer |= QUERY_COMMON
+
+func _on_mechanism_hazard(body: Node3D) -> void:
+	# steam_body_entered (present, gate open) / fell_into_gap -> back to the last checkpoint. Connected deferred
+	# (the signals fire inside the physics flush); re-check, the poll in _physics_process may have reset already.
+	if body != player or not ready_to_play or not service.world_enabled(): return
+	var in_steam: bool = hazard_active and trigger_boxes.has("steam_hazard") and trigger_boxes.steam_hazard.has_point(player.position)
+	if not in_steam and player.position.y > -1.0: return
+	send("reset.request",{"reset_mode":"checkpoint"})
+	hud.show_note(UiText.RECOVERED_NOTE)
 
 func _build_cabinet() -> void:
 	_box("CabinetShell",Vector3(-2,1,0),Vector3(0.7,2,1),Color("687c80"),"common")
@@ -252,10 +319,11 @@ func rebuild(state: Dictionary) -> void:
 		item.body.collision_layer = query | (1 if active else 0)
 		item.body.visible = active
 	if index == 1:
+		# Both mechanisms are derived from flags + era only and jump to their terminal state here.
 		wheel.rotation.x = PI * 0.5 if state.flags.valve_closed_past else 0.0
-		gate.position.z = -5.0 if state.flags.valve_closed_past else -7.0
-		hazard_active = state.era == "present" and not state.flags.valve_closed_past
-		steam.visible = hazard_active
+		gate.apply_state(state.flags.valve_closed_past, state.era)
+		platform.apply_state(state.flags.platform_locked_past, state.era)
+		hazard_active = gate.hazard_active
 	elif index == 2:
 		door.position.y = 4.6 if state.flags.power_on else 1.5
 		for lamp in lights: lamp.light_energy = 2.0 if state.era == "present" and state.flags.power_on else 0.0
@@ -286,6 +354,7 @@ func switch_safety(target: String) -> bool:
 	return true
 
 func in_range(id: String) -> bool:
+	if id == "relay_lever": return is_instance_valid(platform) and platform.lever_in_range(player.global_position)  # 1.6 m
 	if trigger_boxes.has(id): return trigger_boxes[id].has_point(player.global_position)
 	if not devices.has(id): return false
 	var origin: Vector3 = player.camera.global_position
@@ -298,29 +367,40 @@ func in_range(id: String) -> bool:
 
 func at_far_landing() -> bool:
 	return index == 0 and trigger_boxes.far_landing.has_point(player.global_position)
-func valid_checkpoint(id: String) -> bool: return id == "Anchors/Checkpoint"
-func checkpoint_in_range(_id: String) -> bool:
-	return player.global_position.distance_to(anchors.get_node("Checkpoint").global_position) < 1.0
+func valid_checkpoint(id: String) -> bool: return id in checkpoint_ids
+func checkpoint_in_range(id: String) -> bool:
+	if not valid_checkpoint(id): return false
+	return player.global_position.distance_to(anchors.get_node(id.trim_prefix("Anchors/")).global_position) < 1.0
 func reset_player(checkpoint_id) -> void:
-	var node := "Checkpoint" if checkpoint_id != null else "Spawn"
+	var node: String = checkpoint_id.trim_prefix("Anchors/") if checkpoint_id != null else "Spawn"
 	player.global_position = anchors.get_node(node).global_position
 	player.velocity = Vector3.ZERO
 	player.rotation = Vector3.ZERO
 	player.camera.rotation = Vector3.ZERO
-	last_checkpoint_overlap = checkpoint_id != null
+	last_checkpoint_overlap = {}
+	if checkpoint_id != null: last_checkpoint_overlap[checkpoint_id] = true
 	reset_count += 1
 func cancel_transients() -> void:
 	if is_instance_valid(code_panel):
 		code_panel.close()  # hides and clears the input
 	if DisplayServer.get_name() != "headless": Input.mouse_mode = mouse_before_ui
-	# No delayed state writers or animations in MVP. Future tweens must be killed here.
+	# Mechanism animations (gate close 6 s, lock sequence ~5.8 s, shutter 3 s) jump to their terminal state.
+	if is_instance_valid(gate): gate.cancel_transients()
+	if is_instance_valid(platform): platform.cancel_transients()
 
 func send(kind: String, extra: Dictionary = {}) -> Dictionary:
 	var event := {"event_type":kind,"level_id":level_ids[index]}
 	event.merge(extra)
 	return service.request(event)
 func interact(id: String, action: String, value = null) -> Dictionary:
-	return send("interact.request",{"device_id":id,"action":action,"value":value})
+	var before: Dictionary = service.snapshot().get("flags", {})
+	var r := send("interact.request",{"device_id":id,"action":action,"value":value})
+	if index == 1 and is_instance_valid(gate):
+		# Core has written the flag (and rebuild() put both mechanisms in their end state); now play the transient.
+		if r.accepted and id == "valve" and not before.get("valve_closed_past", false): gate.play_close()          # 6 s
+		elif r.accepted and id == "relay_lever" and not before.get("platform_locked_past", false): platform.play_lock_sequence()  # ~5.8 s
+		elif r.reason == "seized" and id == "relay_lever": platform.lever_request("present")  # rusted: handle only jiggles
+	return r
 func submit_code(value: String) -> void:
 	interact("cabinet","submit_code",value)  # HUD shows 密码正确 / 密码不对 from state + feedback
 func nearest_device() -> String:
@@ -348,7 +428,7 @@ func interact_nearest() -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		else: hud.show_reason(str(r.reason))
 	else:
-		var action: String = {"valve":"close","plaque":"read","start_button":"press"}[best]
+		var action: String = {"valve":"close","relay_lever":"pull","plaque":"read","start_button":"press"}[best]
 		var r := interact(best,action)
 		if r.accepted and best == "plaque": hud.show_flag_note("clue_seen")  # show the code again on every read
 ## Interaction prompt for the nearest device; greyed out with a reason when it belongs to the other era.
@@ -388,9 +468,10 @@ func _physics_process(_delta: float) -> void:
 		send("reset.request",{"reset_mode":"checkpoint"})
 		hud.show_note(UiText.RECOVERED_NOTE)
 	if auto_triggers and service.world_enabled():
-		var cp := checkpoint_in_range("Anchors/Checkpoint")
-		if cp and not last_checkpoint_overlap: send("checkpoint.reached",{"device_id":"Anchors/Checkpoint"})
-		last_checkpoint_overlap = cp
+		for id in checkpoint_ids:
+			var cp := checkpoint_in_range(id)
+			if cp and not last_checkpoint_overlap.get(id, false): send("checkpoint.reached",{"device_id":id})
+			last_checkpoint_overlap[id] = cp
 		if index == 0 and at_far_landing() and service.snapshot().era == "past" and not service.snapshot().flags.bridge_crossed_past: interact("far_landing","enter")
 		if in_range("exit_trigger") and not service.snapshot().flags.exit_reached: interact("exit_trigger","enter")
 	_update_prompt()

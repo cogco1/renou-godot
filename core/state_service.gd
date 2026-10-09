@@ -136,9 +136,17 @@ func _request(event: Dictionary) -> Dictionary:
 		"mvp_bridge/exit_trigger/enter":
 			if not flags.bridge_crossed_past: return result(false, "prerequisites_unmet")
 			flags.exit_reached = true
-		"mvp_valve/valve/close": flags.valve_closed_past = true
+		"mvp_valve/valve/close":
+			# Present: rusted solid (UI 已锈死, shot V1). Reason codes are matched by ui/ui_text.gd - do not rename.
+			if st.era != "past": return result(false, "seized")
+			flags.valve_closed_past = true
+		"mvp_valve/relay_lever/pull":
+			# Era first, then the one-way lock: a present pull on a locked lever is still "seized".
+			if st.era != "past": return result(false, "seized")
+			if flags.platform_locked_past: return result(false, "already_locked")
+			flags.platform_locked_past = true
 		"mvp_valve/exit_trigger/enter":
-			if not flags.valve_closed_past: return result(false, "prerequisites_unmet")
+			if not (flags.valve_closed_past and flags.platform_locked_past): return result(false, "prerequisites_unmet")
 			flags.exit_reached = true
 		"mvp_cabinet/plaque/read": flags.clue_seen = true
 		"mvp_cabinet/cabinet/submit_code":
